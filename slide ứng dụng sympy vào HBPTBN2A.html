@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ứng dụng SymPy vào bài toán hệ bất phương trình bậc nhất hai ẩn</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'}};</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+  /* ===== PART A CSS: slide giải thích lệnh ===== */
+.lay2{display:grid;grid-template-columns:900px 1fr;gap:34px;margin-top:26px}
+.col2{display:flex;flex-direction:column;gap:18px;min-width:0}
+.col2 .code pre{font-size:26px;line-height:1.55}
+.bx{padding:20px 28px}
+.bx h4{font:600 17px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--cy);margin-bottom:8px}
+.bx.mt h4{color:#a78bfa}.bx.rs h4{color:var(--gr)}
+.bx p{font-size:26px;line-height:1.5;color:#dbe4ff}
+.bx p b{color:#fff}
+.bx code{font:500 .92em var(--mono);color:var(--gr)}
+.fm{font-family:'Cambria Math','STIX Two Math','Times New Roman',serif;font-size:1.1em;white-space:nowrap}
+.fm i{font-style:italic}
+.fm sup{font-size:.65em}
+.bx p.big{font-size:31px}
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+.chips span{padding:6px 16px;border-radius:99px;font:500 21px var(--mono);background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.35);color:var(--cy)}
+.chips span.on{background:var(--grad);color:#0B1020;border-color:transparent}
+.inst{display:flex;align-items:center;flex-wrap:wrap;gap:16px;margin-top:26px;padding:14px 26px;border-radius:18px;background:rgba(17,24,39,.72);border:1px solid var(--ln)}
+.inst b{font:600 17px var(--mono);letter-spacing:.16em;color:var(--vi)}
+.inst code{font:500 25px var(--mono);color:var(--gr)}
+.inst span{padding:6px 16px;border-radius:99px;border:1px solid var(--ln);font-size:21px;color:var(--mu)}
+
+/* ===== PART B CSS ===== */
+.tf{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:9px 0;font:500 21px var(--mono);color:#d6e4ff}
+.tf em{font-style:normal;font:700 19px var(--mono);padding:5px 16px;border-radius:99px;white-space:nowrap}
+.tf .no{background:rgba(248,113,113,.16);color:#f87171}
+.tf .yes{background:rgba(52,211,153,.16);color:var(--gr)}
+.flow2{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0 10px;font:500 21px var(--mono)}
+.flow2 span{padding:8px 16px;border-radius:12px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.3)}
+.flow2 i{font-style:normal;color:var(--vi);font-size:28px}
+.t13{display:grid;grid-template-columns:70px 1fr 120px;font:500 23px var(--mono)}
+.t13 div{padding:10px 14px;border-bottom:1px solid var(--ln)}
+.t13 .hh{font:600 16px var(--mono);letter-spacing:.14em;color:var(--cy);border-bottom:2px solid var(--ln)}
+.t13 .sg{font-size:30px;text-align:center;color:#fff}
+.t13 .cl{color:var(--gr)}
+.t13 .rr{color:#fbbf24;text-align:right}
+
+/* ===== PART C CSS ===== */
+.c15 .bx p{font-size:23px}
+.bx.wn h4{color:#fbbf24}
+.bx.wn{border-color:rgba(251,191,36,.45)}
+.sub15 .tf{font-size:19px;padding:5px 0}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:28px}
+.tl{padding:24px 26px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.tl .hd{display:flex;align-items:center;gap:16px}
+.tl .ic{margin:0;width:56px;height:56px;font-size:21px;flex:0 0 56px}
+.tl h3{font-size:31px;font-weight:700;line-height:1.1}
+.tl .role{font-size:21px;color:var(--mu);margin-top:2px}
+.tl .code pre{font-size:19px;line-height:1.5;padding:14px 18px;min-height:150px}
+.tl .rsl{font:500 20px var(--mono);color:var(--gr);line-height:1.5}
+.tl p{font-size:23px;line-height:1.5;color:#dbe4ff}
+.tl code{font:500 .9em var(--mono);color:var(--gr)}
+
+/* ===== PART D CSS ===== */
+.map{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:26px;margin-top:28px;align-items:start}
+.mc{padding:22px 28px;border-top:4px solid var(--c)}
+.mc h3{font:700 21px var(--mono);letter-spacing:.12em;color:var(--c);margin-bottom:8px}
+.mr{padding:12px 0;border-bottom:1px solid var(--ln)}
+.mr:last-child{border-bottom:0}
+.mr span{display:block;font:500 23px var(--mono);color:#fff}
+.mr b{display:block;margin-top:3px;font:500 21px var(--mono);color:var(--c)}
+.nu{margin-top:22px;padding:16px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.nu b{font:600 17px var(--mono);letter-spacing:.14em;color:#fbbf24}
+.nu span{padding:5px 14px;border-radius:99px;font:500 20px var(--mono);border:1px solid var(--ln);color:var(--mu)}
+.nu em{font-style:normal;font-size:22px;color:var(--mu)}
+
+.gh{display:grid;grid-template-columns:1fr 480px;gap:44px;margin-top:30px;align-items:stretch}
+.rp{padding:30px 38px;display:flex;flex-direction:column;gap:18px}
+.rp .own{font:500 24px var(--mono);color:var(--mu)}
+.rp .own b{display:block;margin-top:4px;color:#fff;font-size:33px;word-break:break-all}
+.rp .ds{font-size:25px;line-height:1.5;color:#dbe4ff}
+.fl2{display:flex;gap:14px;flex-wrap:wrap}
+.fl2 span{padding:9px 20px;border-radius:12px;background:#0a0f1d;border:1px solid var(--ln);font:500 23px var(--mono);color:var(--gr)}
+.lnk{display:block;padding:18px 26px;border-radius:16px;background:var(--grad);color:#0B1020;font:700 24px var(--mono);text-decoration:none;word-break:break-all;line-height:1.35;pointer-events:auto}
+.run{font:500 23px/1.6 var(--mono);color:#d6e4ff;padding:14px 22px;border-radius:14px;background:#0a0f1d;border:1px solid var(--ln)}
+.run i{font-style:normal;color:var(--vi)}
+.qrw{padding:26px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.qr{position:relative;width:380px;height:380px;border-radius:18px;background:#fff;padding:12px}
+.qr img{width:100%;height:100%;object-fit:contain;display:block}
+.qr .ph{position:absolute;inset:0;display:none;place-items:center;border:3px dashed #0B1020;border-radius:18px;color:#0B1020;font:600 21px/1.5 var(--mono);padding:20px}
+.qrw p{font-size:24px;color:var(--mu)}
+
+:root{--bg:#0B1020;--card:#111827;--cy:#22d3ee;--bl:#3b82f6;--vi:#8b5cf6;--gr:#34d399;--tx:#fff;--mu:#A8B3CF;--ln:rgba(168,179,207,.16);--grad:linear-gradient(90deg,#22d3ee,#3b82f6 55%,#8b5cf6);--mono:'JetBrains Mono',Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#05070f;overflow:hidden;font-family:'Be Vietnam Pro',system-ui,sans-serif;color:var(--tx);user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center;background:var(--bg);overflow:hidden}
+#stage::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--ln) 1px,transparent 1px),linear-gradient(90deg,var(--ln) 1px,transparent 1px);background-size:80px 80px;opacity:.4;-webkit-mask-image:radial-gradient(ellipse at 50% 45%,#000 25%,transparent 85%);mask-image:radial-gradient(ellipse at 50% 45%,#000 25%,transparent 85%)}
+#stage::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 400px at 85% 15%,rgba(139,92,246,.18),transparent),radial-gradient(700px 500px at 10% 90%,rgba(34,211,238,.12),transparent)}
+#bg{position:absolute;inset:0;z-index:1}
+
+/* chrome */
+.top{position:absolute;top:0;left:0;right:0;height:84px;padding:0 70px;display:flex;align-items:center;justify-content:space-between;z-index:20;font-size:21px;color:var(--mu);letter-spacing:.1em}
+.brand b{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:10px;background:var(--grad);color:#0B1020;margin-right:12px;font-size:22px}
+.brand i{color:var(--vi);font-style:normal;margin:0 6px}
+.pill{padding:8px 22px;border:1px solid var(--ln);border-radius:99px;background:rgba(17,24,39,.7);font-family:var(--mono);font-size:19px;color:var(--cy);transition:.4s}
+.bot{position:absolute;bottom:0;left:0;right:0;height:84px;padding:0 70px;display:flex;align-items:center;gap:36px;z-index:20}
+#cnt{font:500 24px var(--mono);color:var(--mu);min-width:110px}
+.track{flex:1;height:4px;background:var(--ln);border-radius:4px;overflow:hidden}
+#bar{display:block;height:100%;width:0;background:var(--grad);transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.btns{display:flex;gap:12px}
+.btns button{width:48px;height:48px;border-radius:14px;border:1px solid var(--ln);background:rgba(17,24,39,.8);color:var(--mu);font:500 24px var(--mono);cursor:pointer;transition:.25s}
+.btns button:hover{color:#fff;border-color:var(--cy);box-shadow:0 0 18px rgba(34,211,238,.35)}
+#notes{position:absolute;left:70px;right:70px;bottom:100px;z-index:30;padding:22px 32px;border-radius:20px;background:rgba(5,7,15,.92);border:1px solid var(--cy);font-size:26px;line-height:1.55;color:#dbe4ff;display:none}
+body.shownotes #notes{display:block}
+aside.note{display:none}
+
+/* slides */
+#deck{position:absolute;inset:0;z-index:5}
+.slide{position:absolute;inset:0;padding:120px 110px 110px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s ease,visibility 0s .6s}
+.slide.active{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .6s ease}
+.slide.leaving{visibility:visible}
+
+/* animation helpers */
+.a{opacity:0;transform:translateY(34px)}
+.a.l{transform:translateX(-50px)}.a.r{transform:translateX(50px)}.a.z{transform:scale(.88)}
+.slide.active .a,.slide.leaving .a{opacity:1;transform:none}
+.slide.active .a{transition:opacity .8s cubic-bezier(.2,.7,.2,1) calc(var(--d,0)*1s),transform .8s cubic-bezier(.2,.7,.2,1) calc(var(--d,0)*1s)}
+.dr{stroke-dasharray:1;stroke-dashoffset:1}
+.slide.active .dr,.slide.leaving .dr{stroke-dashoffset:0}
+.slide.active .dr{transition:stroke-dashoffset 1.3s ease calc(var(--d,0)*1s)}
+.sv{opacity:0}
+.slide.active .sv,.slide.leaving .sv{opacity:1}
+.slide.active .sv{transition:opacity 1s ease calc(var(--d,0)*1s)}
+.pp{opacity:0;transform:scale(0);transform-box:fill-box;transform-origin:center}
+.slide.active .pp,.slide.leaving .pp{opacity:1;transform:none}
+.slide.active .pp{transition:opacity .5s ease calc(var(--d,0)*1s),transform .6s cubic-bezier(.3,1.6,.5,1) calc(var(--d,0)*1s)}
+.slide:not(.active):not(.leaving) :is(.a,.dr,.sv,.pp){transition:none}
+[data-f]{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+[data-f].show{opacity:1;transform:none}
+@keyframes blink{50%{opacity:0}}
+@keyframes glow{50%{box-shadow:0 0 56px rgba(34,211,238,.55)}}
+
+/* typography + components */
+.kick{font:500 22px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--cy)}
+.h2{font-size:46px;font-weight:800;line-height:1.2;margin-top:10px;white-space:nowrap}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.card{background:rgba(17,24,39,.72);border:1px solid rgba(168,179,207,.16);border-radius:24px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.code{border-radius:18px;background:#0a0f1d;border:1px solid rgba(168,179,207,.18);box-shadow:0 20px 60px rgba(0,0,0,.45);overflow:hidden;text-align:left}
+.code .dots{display:flex;align-items:center;gap:9px;padding:12px 18px;background:#0f1628;border-bottom:1px solid var(--ln);font:400 17px var(--mono);color:var(--mu)}
+.code .dots i{width:12px;height:12px;border-radius:50%;background:#ef4444}
+.code .dots i:nth-child(2){background:#f59e0b}.code .dots i:nth-child(3){background:#22c55e}
+.code .dots span{margin-left:12px}
+.code pre{padding:20px 26px;font:400 26px/1.55 var(--mono);color:#d6e4ff;white-space:pre;min-height:1.55em}
+.type::after{content:'▍';color:var(--cy);animation:blink 1s steps(2) infinite}
+.code .k{color:#a78bfa}.code .s{color:var(--gr)}.code .fn{color:#60a5fa}.code .c{color:#64748b;font-style:italic}.code .nm{color:#fbbf24}
+.term pre{color:var(--gr)}
+
+/* slide 1 */
+.cover-l{position:absolute;left:110px;top:165px;width:1100px}
+.t1{font-size:54px;font-weight:800;line-height:1.15;margin:26px 0 6px}
+.t2{font-size:84px;font-weight:800;line-height:1.08}
+.sub{font-size:32px;color:var(--mu);margin:26px 0 38px;font-weight:300;letter-spacing:.04em}
+.info{display:flex;gap:26px}
+.info .card{padding:22px 30px}
+.info h4{font:500 17px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--vi);margin-bottom:12px}
+.info ul{list-style:none;display:grid;grid-template-columns:auto auto;gap:6px 34px;font-size:25px}
+.info p{font-size:25px;line-height:1.55}.info p small{display:block;font-size:21px;color:var(--mu)}
+.cv{position:absolute;right:70px;top:130px;width:700px;height:700px;overflow:visible}
+.chip{position:absolute;padding:8px 18px;border-radius:12px;font-size:26px;background:rgba(17,24,39,.8);border:1px solid rgba(34,211,238,.3)}
+.cover-code{position:absolute;right:120px;bottom:130px;width:430px}
+
+/* slide 2 */
+.s2{display:flex;justify-content:center;gap:130px;margin-top:34px}
+.flow{width:600px;padding-top:20px}
+div.fn{display:flex;align-items:center;gap:18px;padding:20px 28px;font-size:30px;font-weight:600}
+div.fn b{font:700 21px var(--mono);color:var(--cy)}
+div.fn.res{background:var(--grad);color:#0B1020;border:0;animation:glow 3s ease-in-out 4.6s infinite}
+div.fn.res b{color:#0B1020}
+.ar{height:30px;text-align:center;color:var(--vi);font-size:26px;line-height:30px}
+.viz{position:relative;width:850px;height:732px}
+.viz svg{width:100%;height:100%}
+.sys{position:absolute;right:0;top:0;padding:14px 28px;font-size:30px}
+  /* ===== PART 2 CSS ===== */
+.cd{display:flex;flex-direction:column;justify-content:center;padding-bottom:230px}
+.num{font-size:300px;font-weight:800;line-height:.9;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cd h2{font-size:84px;font-weight:800;margin-top:8px}
+.cd p{font-size:34px;color:var(--mu);margin-top:16px;font-weight:300}
+.ghost{position:absolute;right:150px;top:250px;font-size:96px;color:rgba(168,179,207,.22)}
+.chain{position:absolute;left:110px;right:110px;bottom:130px;display:flex;align-items:center;justify-content:space-between}
+.chain .n{padding:18px 24px;font-size:24px;font-weight:600;text-align:center}
+.chain .ar2{color:var(--vi);font-size:34px}
+
+.s4{display:flex;justify-content:center;align-items:center;gap:90px;margin-top:24px}
+.col4{width:640px;display:flex;flex-direction:column}
+.m{padding:20px 30px;font-size:40px;text-align:center}
+.m small{display:block;font:500 20px var(--mono);letter-spacing:.14em;color:var(--cy);margin-bottom:6px}
+.m.t{font-size:32px;font-weight:600}
+.col4 .ar{height:34px}
+.cap4{margin-top:18px;font-size:25px;color:var(--mu);text-align:center}
+.viz4{width:880px;height:718px}.viz4 svg{width:100%;height:100%}
+
+.s5{display:flex;justify-content:center;gap:80px;margin-top:24px}
+.steps{width:720px;display:flex;flex-direction:column;gap:13px}
+.stp{display:flex;align-items:center;gap:20px;padding:15px 24px;font-size:30px;font-weight:600}
+.stp[data-f]{opacity:.3;transform:none;border-color:var(--ln)}
+.stp[data-f].show{opacity:1;border-color:rgba(34,211,238,.6);background:rgba(17,24,39,.9)}
+.stp b{display:grid;place-items:center;flex:0 0 42px;height:42px;border-radius:50%;border:2px solid var(--mu);font:700 22px var(--mono);transition:.6s}
+.stp.show b{background:var(--grad);border-color:transparent;color:#0B1020}
+.hint{font:400 20px var(--mono);color:var(--mu);margin-top:6px}
+.viz5{position:relative;width:700px;height:656px}.viz5 svg{width:100%;height:100%}
+.sys5{position:absolute;right:0;top:10px;width:470px;padding:16px 26px;font-size:26px}
+.sys5 .r{display:flex;justify-content:space-between;gap:20px;padding:5px 0}
+.k{opacity:0;transition:opacity .9s ease}
+.st-1 .k1,.st-2 .k2,.st-4 .k4,.st-5 .k5,.st-6 .k6{opacity:1}
+.dl{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.3s ease}
+.st-3 .dl{stroke-dashoffset:0}
+
+.strip{display:flex;gap:24px;margin-top:26px;align-items:center}
+.strip .card{padding:14px 28px;font-size:28px}
+.strip b{font:700 44px var(--mono);color:var(--cy);margin:0 8px}
+.cmp{display:flex;justify-content:center;gap:34px;margin-top:30px}
+.pc{width:640px;padding:28px 40px}
+.pc h3{font:600 22px var(--mono);letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
+.pc.bad h3{color:#f87171}.pc.ok h3{color:var(--gr)}
+.pc ul{list-style:none}
+.pc li{display:flex;align-items:center;gap:16px;font-size:30px;padding:9px 0}
+.pc li i{flex:0 0 36px;height:36px;border-radius:50%;display:grid;place-items:center;font:700 20px var(--mono);font-style:normal}
+.bad li i{background:rgba(248,113,113,.18);color:#f87171}
+.ok li i{background:rgba(52,211,153,.18);color:var(--gr)}
+.mid{width:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;font:600 20px var(--mono);letter-spacing:.1em;color:var(--mu)}
+.mid .arr{font-size:64px;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.warn{margin-top:28px;text-align:center;font-size:34px;color:var(--mu)}
+.warn b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.code .k{opacity:1;transition:none}
+/* ===== PART 3 CSS ===== */
+.t7{position:absolute;right:110px;top:240px;width:780px}
+.t7 pre{font-size:27px;line-height:1.6}
+
+.s8badges{display:flex;gap:28px;margin-top:30px}
+.bd{flex:1;padding:22px 30px}
+.bd b{display:block;font:700 34px var(--mono);letter-spacing:.08em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:4px}
+.bd span{font-size:24px;color:var(--mu)}
+.s8row{display:flex;gap:40px;margin-top:34px;align-items:stretch}
+.s8row .code{width:800px}
+.s8row .code pre{font-size:30px;line-height:1.7}
+.c8{flex:1;padding:30px 40px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.r8{display:flex;align-items:center;gap:22px}
+.r8 code{font:500 26px var(--mono);color:var(--mu);width:230px}
+.r8 .v{flex:1;font:500 30px var(--mono)}
+.r8 em{font:600 19px var(--mono);font-style:normal;padding:6px 14px;border-radius:99px}
+.r8.bad .v{color:#fbbf24}.r8.bad em{background:rgba(251,191,36,.15);color:#fbbf24}
+.r8.ok .v{font-size:60px;color:var(--cy)}.r8.ok em{background:rgba(52,211,153,.15);color:var(--gr)}
+.mid8{text-align:center;color:var(--vi);font-size:34px}
+
+.g9{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:34px}
+.cc{padding:26px 32px;position:relative}
+.cc:hover{box-shadow:0 0 36px rgba(34,211,238,.25);border-color:var(--cy)}
+.cc.w2{grid-column:span 2}
+.ic{width:62px;height:62px;border-radius:16px;display:grid;place-items:center;font:700 26px var(--mono);background:var(--grad);color:#0B1020;margin-bottom:14px}
+.cc.ext .ic{background:linear-gradient(135deg,#8b5cf6,#ec4899)}
+.cc h3{font-size:30px;font-weight:700}
+.cc code{display:block;margin:12px 0 10px;font:500 25px var(--mono);color:var(--gr)}
+.cc p{font-size:23px;color:var(--mu)}
+.tag9{position:absolute;right:22px;top:22px;font:600 16px var(--mono);letter-spacing:.1em;color:var(--vi);border:1px solid var(--vi);padding:4px 12px;border-radius:99px}
+
+.ch10{display:flex;align-items:stretch;justify-content:space-between;margin-top:34px}
+.st10{width:370px;padding:24px 26px;text-align:center;display:flex;flex-direction:column;gap:10px;justify-content:center}
+.st10 small{font:600 17px var(--mono);letter-spacing:.14em;color:var(--cy);text-transform:uppercase}
+.st10 .big{font:500 28px var(--mono);color:#fff}
+.st10 .sm{font-size:22px;color:var(--mu)}
+.st10.fin{border-color:var(--cy);box-shadow:0 0 40px rgba(34,211,238,.2)}
+.ar10{align-self:center;color:var(--vi);font-size:40px;width:60px;text-align:center}
+.code10{width:1000px;margin:34px auto 0}
+.code10 pre{font-size:25px}
+.msg10{margin-top:30px;text-align:center;font-size:32px;color:var(--mu)}
+.msg10 b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.p11{position:relative;margin-top:40px}
+.pipe{display:grid;grid-template-columns:repeat(6,1fr);gap:24px;position:relative}
+.pipe::before{content:"";position:absolute;left:7.75%;right:7.75%;top:50px;height:3px;background:linear-gradient(90deg,var(--cy),var(--bl),var(--vi));opacity:.45}
+.nd{position:relative;padding:22px 16px;text-align:center;min-height:330px}
+.nd .cir{width:56px;height:56px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;font:700 24px var(--mono);color:#0B1020;background:var(--c)}
+.nd h4{font-size:24px;font-weight:600;line-height:1.3;margin-bottom:10px}
+.nd .sb{font-size:19px;color:var(--mu);line-height:1.4}
+.nd .fx{margin-top:14px;font:500 15px var(--mono);color:var(--c)}
+.pk{position:absolute;top:37px;left:7.75%;width:26px;height:26px;margin-left:-13px;border-radius:50%;background:#fff;box-shadow:0 0 22px 8px var(--cy);opacity:0;z-index:3}
+.slide.active .pk{animation:run 8s linear 2s infinite}
+.slide.active .nd{animation:lit 8s linear infinite;animation-delay:calc(2.02s + var(--i)*1.47s)}
+@keyframes run{0%{left:7.75%;opacity:0}4%{left:7.75%;opacity:1}96%{left:92.25%;opacity:1}100%{left:92.25%;opacity:0}}
+@keyframes lit{0%,8%{border-color:var(--c);box-shadow:0 0 34px -6px var(--c)}13%,100%{border-color:rgba(168,179,207,.16);box-shadow:none}}
+.bands{display:grid;grid-template-columns:repeat(6,1fr);gap:24px;margin-top:22px}
+.bnd{padding:14px 20px;border-radius:16px;border-top:4px solid var(--c);text-align:center;font:600 21px var(--mono);color:var(--c);background:rgba(17,24,39,.6)}
+.msg11{margin-top:34px;text-align:center;font-size:31px;color:var(--mu)}
+.msg11 b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* ===== PART 4 CSS ===== */
+.v12{position:absolute;right:190px;top:190px;width:560px}
+.s12{display:flex;align-items:center;gap:22px;padding:20px 30px;font:600 27px var(--mono);letter-spacing:.1em;border-left:4px solid var(--c)}
+.s12 i{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:var(--c);color:#0B1020;font:700 24px var(--mono);font-style:normal;letter-spacing:0}
+.v12 .ar{height:34px;line-height:34px}
+
+.g13{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:34px}
+.tp{padding:22px 24px 24px}
+.tp .tg{font:600 18px var(--mono);letter-spacing:.14em;color:var(--cy)}
+.tp h3{font-size:26px;font-weight:700;line-height:1.3;margin:6px 0 14px;min-height:68px}
+.tp svg{width:100%;height:auto;display:block;background:rgba(5,7,15,.5);border-radius:16px}
+.tp .ex{margin-top:14px;font:500 20px var(--mono);color:var(--mu)}
+
+.s14{display:grid;grid-template-columns:420px 580px 1fr;gap:34px;margin-top:26px}
+.col14h{font:600 19px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--vi);margin-bottom:14px}
+.prob{padding:30px 34px;font-size:48px;text-align:center}
+.goal{margin-top:22px;padding:22px 28px;font-size:26px;color:var(--mu);line-height:1.5}
+.goal b{color:#fff}
+.alg{display:flex;flex-direction:column;gap:14px}
+.alg .stp{font-size:27px;align-items:flex-start}
+.alg .stp small{display:block;font:400 19px var(--mono);color:var(--mu);margin-top:4px}
+.q{opacity:0;transition:opacity .9s ease}
+.st-1 .q1,.st-2 .q2,.st-3 .q3,.st-4 .q4{opacity:1}
+.d14{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.2s ease}
+.st-1 .d14{stroke-dashoffset:0}
+.res14{margin-top:14px;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;font:600 25px var(--mono)}
+.res14 em{font-style:normal;color:var(--cy)}
+
+.s15{display:flex;gap:34px;margin-top:22px}
+.l15{width:880px;display:flex;flex-direction:column;gap:14px}
+.l15 .code pre{font-size:20px;line-height:1.5;padding:14px 22px;height:210px}
+.l15 .term pre{font-size:18px;line-height:1.42;padding:14px 22px;height:362px}
+.r15{flex:1;padding:18px 22px}
+.hd15{font:600 17px var(--mono);letter-spacing:.14em;color:var(--cy);margin-bottom:8px}
+.r15 svg{width:100%;height:auto;display:block}
+.lg15{display:flex;justify-content:space-between;margin-top:6px;font:500 19px var(--mono)}
+.cap15{margin-top:8px;font-size:19px;color:var(--mu)}
+/* ===== SLOT ẢNH SLIDE 15 (tỉ lệ vuông) ===== */
+.r15{display:flex;flex-direction:column}
+.slot{position:relative;flex:1;min-height:0;border-radius:14px;overflow:hidden}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:12px}
+.slot .ph{position:absolute;inset:0;display:none;place-items:center;border:2px dashed var(--cy);border-radius:14px;text-align:center;color:var(--mu);font:500 24px/1.6 var(--mono);background:rgba(34,211,238,.05)}
+.slot .ph b{display:block;color:var(--cy);font-size:30px}
+.cap15{font-size:18px}
+/* ===== PART 5 CSS ===== */
+@keyframes shim{to{background-position:200% 0}}
+@keyframes flt{50%{transform:translateY(-16px)}}
+
+.tb{width:1480px;margin:34px auto 0}
+.rw{display:grid;grid-template-columns:1.1fr 1fr 1fr;align-items:center;margin-bottom:10px}
+.rw span{padding:15px 28px;font-size:29px}
+.rw span:first-child{font-weight:700;color:var(--mu)}
+.rw span:nth-child(3){color:var(--gr);font-weight:600}
+.rw.hd{margin-bottom:6px}
+.rw.hd span{font:600 20px var(--mono);letter-spacing:.16em;color:var(--cy);padding:8px 28px}
+.rw.hot{border-color:var(--cy);box-shadow:0 0 36px -8px var(--cy)}
+.rw.hot span:nth-child(3){color:var(--cy)}
+.big16{margin-top:36px;text-align:center;font-size:54px;font-weight:800;line-height:1.3;background:linear-gradient(90deg,#22d3ee,#3b82f6,#8b5cf6,#22d3ee);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shim 6s linear infinite}
+
+.pr{display:grid;grid-template-columns:repeat(5,1fr);gap:26px;margin-top:34px}
+.p17{padding:26px 18px;text-align:center}
+.p17 .nb{width:54px;height:54px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;font:700 24px var(--mono);background:var(--grad);color:#0B1020}
+.p17 h4{font-size:27px;font-weight:700;margin-bottom:8px}
+.p17 p{font-size:21px;color:var(--mu);line-height:1.4}
+.p17.hot{border-color:var(--cy);box-shadow:0 0 44px -6px rgba(34,211,238,.5)}
+.loop17{display:block;width:100%;height:50px;margin-top:6px}
+.who{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:20px}
+.who .pl{padding:14px 26px;font-size:27px;font-weight:600;display:flex;align-items:center;gap:12px}
+.who .pl em{font-style:normal;font-size:34px}
+.who .sp{color:var(--vi);font-size:30px}
+.vs17{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:34px}
+.vs17 .card{padding:24px 34px;font-size:32px;font-weight:600;text-align:center}
+.vs17 .no{border-color:rgba(248,113,113,.5);color:#f87171}
+.vs17 .no s{text-decoration-thickness:3px}
+.vs17 .yes{border-color:rgba(52,211,153,.6);color:var(--gr)}
+
+.g18{display:grid;grid-template-columns:repeat(3,1fr);gap:34px;margin-top:40px}
+.c18{padding:34px 38px}
+.c18 .n18{font:700 76px/1 var(--mono);background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.c18 h3{font-size:40px;font-weight:800;margin:12px 0 10px}
+.c18 p{font-size:27px;line-height:1.5;color:var(--mu)}
+.q18{margin-top:52px;text-align:center}
+.q18 span{display:inline-block;font-size:62px;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.q18 i{display:block;width:0;height:4px;margin:18px auto 0;border-radius:4px;background:var(--grad);transition:width 1.6s ease 4.6s}
+.slide.active .q18 i{width:760px}
+
+.thx{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-bottom:150px}
+.thx .bgv{position:absolute;inset:0;width:1920px;height:1080px}
+.thx .t{position:relative;font-size:150px;font-weight:800;letter-spacing:.06em;line-height:1}
+.thx .qa{position:relative;font-size:100px;font-weight:800;margin-top:14px}
+.thx .ft{position:absolute;left:0;right:0;bottom:130px;text-align:center;font-size:27px;color:var(--mu);letter-spacing:.04em}
+.fl{position:absolute;padding:10px 22px;border-radius:14px;font-size:30px;background:rgba(17,24,39,.75);border:1px solid rgba(34,211,238,.28);animation:flt 6s ease-in-out infinite}
+</style>
+</head>
+<body>
+<div id="stage">
+<canvas id="bg"></canvas>
+<div class="top"><div class="brand"><b>Σ</b>SymPy<i>×</i>Bất phương trình</div><div class="pill" id="chap">Mở đầu</div></div>
+
+<main id="deck">
+
+<!-- ================= SLIDE 1 — COVER ================= -->
+<section class="slide" data-ch="Mở đầu">
+  <div class="cover-l">
+    <div class="kick a" style="--d:.3">Đại học Huế · Trường Đại học Sư phạm · Khoa Toán</div>
+    <h1>
+      <div class="t1 a" style="--d:.6">ỨNG DỤNG SYMPY VÀO BÀI TOÁN</div>
+      <div class="t2 grad a" style="--d:.9">HỆ BẤT PHƯƠNG TRÌNH<br>BẬC NHẤT HAI ẨN</div>
+    </h1>
+    <p class="sub a" style="--d:1.2">Tích hợp CNTT trong dạy Toán</p>
+    <div class="info">
+      <div class="card a" style="--d:1.5"><h4>Nhóm thực hiện</h4>
+        <ul><li>Dương Thế Tâm</li><li>Nguyễn Cao Minh Phúc</li><li>Ngô Hữu Trí</li><li>Trịnh Việt Anh Minh</li></ul></div>
+      <div class="card a" style="--d:1.8"><h4>Giảng viên hướng dẫn</h4>
+        <p>TS. Nguyễn Đăng Minh Phúc<small>Huế, 2026</small></p></div>
+    </div>
+  </div>
+
+  <div class="cv">
+    <svg viewBox="0 0 700 700" fill="none">
+      <defs><linearGradient id="rg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee" stop-opacity=".38"/><stop offset="1" stop-color="#8b5cf6" stop-opacity=".30"/></linearGradient></defs>
+      <path class="dr" pathLength="1" d="M40 600H660" stroke="#A8B3CF" stroke-width="2" style="--d:.2"/>
+      <path class="dr" pathLength="1" d="M110 660V50" stroke="#A8B3CF" stroke-width="2" style="--d:.2"/>
+      <text x="668" y="592" fill="#A8B3CF" font-size="26" font-style="italic" class="sv" style="--d:.8">x</text>
+      <text x="124" y="62" fill="#A8B3CF" font-size="26" font-style="italic" class="sv" style="--d:.8">y</text>
+      <path class="dr" pathLength="1" d="M66 116L616 666" stroke="#22d3ee" stroke-width="4" stroke-linecap="round" style="--d:.7"/>
+      <polygon class="sv" points="110,600 110,160 550,600" fill="url(#rg1)" style="--d:2.4"/>
+      <g class="pp" style="--d:2.9"><circle cx="110" cy="600" r="9" fill="#22d3ee" style="filter:drop-shadow(0 0 10px #22d3ee)"/><text x="70" y="632" fill="#fff" font-size="24" font-weight="600">O</text></g>
+      <g class="pp" style="--d:3.2"><circle cx="110" cy="160" r="9" fill="#22d3ee" style="filter:drop-shadow(0 0 10px #22d3ee)"/><text x="126" y="156" fill="#fff" font-size="24" font-weight="600">A(0; 4)</text></g>
+      <g class="pp" style="--d:3.5"><circle cx="550" cy="600" r="9" fill="#22d3ee" style="filter:drop-shadow(0 0 10px #22d3ee)"/><text x="520" y="640" fill="#fff" font-size="24" font-weight="600">B(4; 0)</text></g>
+    </svg>
+    <div class="chip a" style="--d:1.4;left:380px;top:60px">\(x+y\le 4\)</div>
+    <div class="chip a" style="--d:1.7;left:150px;top:640px">\(x\ge 0\)</div>
+    <div class="chip a" style="--d:2.0;left:20px;top:300px">\(y\ge 0\)</div>
+  </div>
+  <div class="code cover-code a z" style="--d:3.9"><div class="dots"><i></i><i></i><i></i><span>main.py</span></div><pre class="type" data-lang="py" data-delay="4300">import sympy as sp</pre></div>
+  <aside class="note">Xin chào thầy và các bạn. Hôm nay nhóm trình bày đề tài ứng dụng SymPy vào bài toán hệ bất phương trình bậc nhất hai ẩn. Điểm nhóm muốn nhấn mạnh xuyên suốt là công cụ giúp kiểm chứng và trực quan hóa, còn tư duy toán học vẫn là của người học.</aside>
+</section>
+
+<!-- ================= SLIDE 2 — CÂU HỎI MỞ ĐẦU ================= -->
+<section class="slide" data-ch="Mở đầu">
+  <div class="kick a">Đặt vấn đề</div>
+  <h2 class="h2 a" style="--d:.15">Từ một hệ bất phương trình... <span class="grad">làm sao nhìn thấy miền nghiệm?</span></h2>
+  <div class="s2">
+    <div class="flow">
+      <div class="fn card a l" style="--d:.6"><b>01</b>Hệ bất phương trình</div><div class="ar a" style="--d:.9">↓</div>
+      <div class="fn card a l" style="--d:1.2"><b>02</b>Nhiều đường biên</div><div class="ar a" style="--d:1.5">↓</div>
+      <div class="fn card a l" style="--d:2.0"><b>03</b>Nhiều miền nghiệm</div><div class="ar a" style="--d:2.3">↓</div>
+      <div class="fn card a l" style="--d:2.8"><b>04</b>Giao các miền nghiệm</div><div class="ar a" style="--d:3.1">↓</div>
+      <div class="fn res card a l" style="--d:3.6"><b>05</b>KẾT QUẢ</div>
+    </div>
+    <div class="viz">
+      <svg viewBox="0 0 720 620" fill="none">
+        <defs>
+          <clipPath id="c2"><rect x="30" y="10" width="670" height="590"/></clipPath>
+          <linearGradient id="rg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee" stop-opacity=".55"/><stop offset="1" stop-color="#8b5cf6" stop-opacity=".45"/></linearGradient>
+        </defs>
+        <g clip-path="url(#c2)">
+          <polygon class="sv" points="84,-20 404,620 0,620 0,-20" fill="#22d3ee" fill-opacity=".09" style="--d:2.0"/>
+          <polygon class="sv" points="0,275 720,515 720,620 0,620" fill="#8b5cf6" fill-opacity=".10" style="--d:2.3"/>
+        </g>
+        <path class="dr" pathLength="1" d="M40 500H690" stroke="#A8B3CF" stroke-width="2" style="--d:.4"/>
+        <path class="dr" pathLength="1" d="M80 560V20" stroke="#A8B3CF" stroke-width="2" style="--d:.4"/>
+        <text x="696" y="492" fill="#A8B3CF" font-size="24" font-style="italic" class="sv" style="--d:.9">x</text>
+        <text x="92" y="32" fill="#A8B3CF" font-size="24" font-style="italic" class="sv" style="--d:.9">y</text>
+        <path class="dr" pathLength="1" d="M113 38L377 566" stroke="#22d3ee" stroke-width="4" stroke-linecap="round" style="--d:1.2"/>
+        <path class="dr" pathLength="1" d="M47 291L641 489" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round" style="--d:1.6"/>
+        <text x="160" y="96" fill="#22d3ee" font-size="22" font-family="JetBrains Mono" class="sv" style="--d:1.9">2x + y = 8</text>
+        <text x="450" y="412" fill="#a78bfa" font-size="22" font-family="JetBrains Mono" class="sv" style="--d:2.2">x + 3y = 9</text>
+        <polygon class="sv" points="80,500 344,500 278,368 80,302" fill="url(#rg2)" stroke="#fff" stroke-opacity=".75" stroke-width="2" style="--d:3.6"/>
+        <g class="pp" style="--d:2.8"><circle cx="80" cy="500" r="8" fill="#fff"/><text x="50" y="526" fill="#fff" font-size="22" font-weight="600">O</text></g>
+        <g class="pp" style="--d:2.95"><circle cx="344" cy="500" r="8" fill="#fff"/><text x="332" y="530" fill="#fff" font-size="22" font-weight="600">A(4; 0)</text></g>
+        <g class="pp" style="--d:3.1"><circle cx="278" cy="368" r="8" fill="#fff"/><text x="294" y="360" fill="#fff" font-size="22" font-weight="600">B(3; 2)</text></g>
+        <g class="pp" style="--d:3.25"><circle cx="80" cy="302" r="8" fill="#fff"/><text x="96" y="294" fill="#fff" font-size="22" font-weight="600">C(0; 3)</text></g>
+      </svg>
+      <div class="sys card a z" style="--d:.5">\(\begin{cases}2x+y\le 8\\ x+3y\le 9\\ x\ge 0,\ y\ge 0\end{cases}\)</div>
+    </div>
+  </div>
+  <aside class="note">Một hệ bất phương trình trên giấy trông rất gọn. Nhưng để thấy miền nghiệm, ta phải vẽ nhiều đường biên, tô từng nửa mặt phẳng rồi lấy phần chung. Câu hỏi của nhóm là: làm sao thực hiện quy trình đó chính xác, và công cụ có thể hỗ trợ ở đâu?</aside>
+</section>
+<!-- ================= SLIDE 3 — CHƯƠNG 1 ================= -->
+<section class="slide cd" data-ch="Chương 1">
+  <div class="kick a" style="--d:.2">Chương</div>
+  <div class="num a" style="--d:.4">01</div>
+  <h2 class="a" style="--d:.7">CƠ SỞ LÝ THUYẾT</h2>
+  <p class="a" style="--d:.9">Hệ bất phương trình bậc nhất hai ẩn</p>
+  <div class="ghost a r" style="--d:1">\(ax+by+c\ge 0\)</div>
+  <div class="chain">
+    <div class="n card a" style="--d:1.3">Bất phương trình</div><span class="ar2 a" style="--d:1.5">→</span>
+    <div class="n card a" style="--d:1.7">Đường biên</div><span class="ar2 a" style="--d:1.9">→</span>
+    <div class="n card a" style="--d:2.1">Nửa mặt phẳng nghiệm</div><span class="ar2 a" style="--d:2.3">→</span>
+    <div class="n card a" style="--d:2.5">Giao các miền nghiệm</div><span class="ar2 a" style="--d:2.7">→</span>
+    <div class="n card a" style="--d:2.9;border-color:var(--cy)">Miền nghiệm của hệ</div>
+  </div>
+  <aside class="note">Chương 1 là nền tảng toán học. Mạch ý rất ngắn: mỗi bất phương trình cho một nửa mặt phẳng, hệ bất phương trình là phần giao của các nửa mặt phẳng đó. Nắm chắc chuỗi này thì mọi bước sau đều dễ hiểu.</aside>
+</section>
+
+<!-- ================= SLIDE 4 — Ý TƯỞNG CỐT LÕI ================= -->
+<section class="slide" data-ch="Chương 1">
+  <div class="kick a">Ý tưởng cốt lõi</div>
+  <h2 class="h2 a" style="--d:.15">Một bất phương trình = <span class="grad">một nửa mặt phẳng</span></h2>
+  <div class="s4">
+    <div class="col4">
+      <div class="m card a l" style="--d:.5"><small>Bất phương trình</small>\(ax+by+c\ge 0\)</div><div class="ar a" style="--d:.8">↓</div>
+      <div class="m card a l" style="--d:1.4"><small>Đường biên</small>\(d:\ ax+by+c=0\)</div><div class="ar a" style="--d:1.7">↓</div>
+      <div class="m t card a l" style="--d:2.2">Chia mặt phẳng thành <span class="grad">hai nửa mặt phẳng</span></div>
+      <p class="cap4 a" style="--d:2.6">Điểm thử cho biết nửa nào là miền nghiệm</p>
+    </div>
+    <div class="viz4">
+      <svg viewBox="0 0 760 620" fill="none">
+        <defs><clipPath id="c4"><rect x="40" y="20" width="700" height="590"/></clipPath>
+          <linearGradient id="rg4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee" stop-opacity=".42"/><stop offset="1" stop-color="#8b5cf6" stop-opacity=".30"/></linearGradient></defs>
+        <g clip-path="url(#c4)"><polygon class="sv" points="0,50 650,700 760,700 760,0 0,0" fill="url(#rg4)" style="--d:3.6"/></g>
+        <path class="dr" pathLength="1" d="M60 450H740" stroke="#A8B3CF" stroke-width="2" style="--d:.3"/>
+        <path class="dr" pathLength="1" d="M200 600V30" stroke="#A8B3CF" stroke-width="2" style="--d:.3"/>
+        <text x="744" y="442" fill="#A8B3CF" font-size="22" font-style="italic">x</text>
+        <text x="212" y="42" fill="#A8B3CF" font-size="22" font-style="italic">y</text>
+        <path class="dr" pathLength="1" d="M50 100L550 600" stroke="#22d3ee" stroke-width="4" stroke-linecap="round" style="--d:.9"/>
+        <g class="pp" style="--d:1.6"><circle cx="400" cy="450" r="6" fill="#22d3ee"/><text x="350" y="478" fill="#A8B3CF" font-size="20">(2; 0)</text></g>
+        <g class="pp" style="--d:1.8"><circle cx="200" cy="250" r="6" fill="#22d3ee"/><text x="214" y="244" fill="#A8B3CF" font-size="20">(0; 2)</text></g>
+        <text class="sv" x="400" y="570" fill="#22d3ee" font-size="22" font-family="JetBrains Mono" style="--d:2">d: x + y − 2 = 0</text>
+        <g class="pp" style="--d:2.9"><circle cx="200" cy="450" r="8" fill="#f87171"/><path d="M190 440l20 20M210 440l-20 20" stroke="#fff" stroke-width="2"/><text x="60" y="500" fill="#f87171" font-size="21">O: 0 + 0 − 2 = −2 ≥ 0 sai</text></g>
+        <text class="sv" x="470" y="108" fill="#22d3ee" font-size="28" font-weight="700" style="--d:3.9">MIỀN NGHIỆM</text>
+        <text class="sv" x="470" y="140" fill="#fff" font-size="24" style="--d:3.9">x + y − 2 ≥ 0</text>
+        <g class="pp" style="--d:4.4"><circle cx="500" cy="250" r="8" fill="#34d399"/><text x="430" y="228" fill="#34d399" font-size="21">(3; 2): 3 + 2 − 2 = 3 ≥ 0 đúng</text></g>
+      </svg>
+    </div>
+  </div>
+  <aside class="note">Một bất phương trình bậc nhất hai ẩn luôn gắn với một đường biên. Đường này chia mặt phẳng làm hai nửa. Để biết nửa nào là nghiệm, ta lấy một điểm thử không nằm trên đường biên. Ở đây O cho ra khẳng định sai, nên miền nghiệm là nửa mặt phẳng không chứa O.</aside>
+</section>
+
+<!-- ================= SLIDE 5 — GIẢI BẰNG HÌNH HỌC (nhấn → từng bước) ================= -->
+<section class="slide" data-ch="Chương 1">
+  <div class="kick a">Giải bằng hình học</div>
+  <h2 class="h2 a" style="--d:.15">Quy trình <span class="grad">6 bước</span> giải hệ bất phương trình</h2>
+  <div class="s5">
+    <div class="steps a l" style="--d:.4">
+      <div class="stp card" data-f="1"><b>1</b>Chuẩn hóa bất phương trình</div>
+      <div class="stp card" data-f="2"><b>2</b>Xác định đường biên</div>
+      <div class="stp card" data-f="3"><b>3</b>Vẽ các đường biên</div>
+      <div class="stp card" data-f="4"><b>4</b>Xác định từng miền nghiệm</div>
+      <div class="stp card" data-f="5"><b>5</b>Lấy phần giao</div>
+      <div class="stp card" data-f="6"><b>6</b>Kết luận miền nghiệm</div>
+    </div>
+    <div class="viz5 a z" style="--d:.6">
+      <svg viewBox="0 0 640 600" fill="none">
+        <defs><clipPath id="c5"><rect x="40" y="20" width="580" height="570"/></clipPath>
+          <linearGradient id="rg5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee" stop-opacity=".6"/><stop offset="1" stop-color="#8b5cf6" stop-opacity=".5"/></linearGradient></defs>
+        <g clip-path="url(#c5)" class="k k4">
+          <polygon points="110,0 640,0 640,640 110,640" fill="#8b5cf6" fill-opacity=".12"/>
+          <polygon points="0,0 640,0 640,500 0,500" fill="#3b82f6" fill-opacity=".12"/>
+          <polygon points="0,-10 650,640 0,640" fill="#22d3ee" fill-opacity=".12"/>
+        </g>
+        <polygon class="k k5" points="110,500 110,100 510,500" fill="url(#rg5)" stroke="#fff" stroke-opacity=".8" stroke-width="2"/>
+        <path d="M50 500H600M110 560V30" stroke="#A8B3CF" stroke-opacity=".6" stroke-width="2"/>
+        <text x="604" y="492" fill="#A8B3CF" font-size="22" font-style="italic">x</text>
+        <text x="122" y="42" fill="#A8B3CF" font-size="22" font-style="italic">y</text>
+        <path class="dl" pathLength="1" d="M110 560V30" stroke="#8b5cf6" stroke-width="4"/>
+        <path class="dl" pathLength="1" d="M50 500H600" stroke="#3b82f6" stroke-width="4"/>
+        <path class="dl" pathLength="1" d="M70 60L550 540" stroke="#22d3ee" stroke-width="4" stroke-linecap="round"/>
+        <g class="k k6">
+          <circle cx="110" cy="500" r="8" fill="#fff"/><text x="72" y="530" fill="#fff" font-size="22" font-weight="600">O</text>
+          <circle cx="110" cy="100" r="8" fill="#fff"/><text x="126" y="98" fill="#fff" font-size="22" font-weight="600">A(0; 4)</text>
+          <circle cx="510" cy="500" r="8" fill="#fff"/><text x="470" y="536" fill="#fff" font-size="22" font-weight="600">B(4; 0)</text>
+          <text x="150" y="574" fill="#22d3ee" font-size="26" font-weight="700">Miền nghiệm: tam giác OAB</text>
+        </g>
+      </svg>
+      <div class="sys5 card k k1">
+        <div class="r"><span>\(x+y-4\le 0\)</span><span class="k k2">\(\Rightarrow d_1:\ x+y=4\)</span></div>
+        <div class="r"><span>\(x\ge 0\)</span><span class="k k2">\(\Rightarrow d_2:\ x=0\)</span></div>
+        <div class="r"><span>\(y\ge 0\)</span><span class="k k2">\(\Rightarrow d_3:\ y=0\)</span></div>
+      </div>
+    </div>
+  </div>
+  <aside class="note">Sáu bước này nhóm đã làm tay ở Chương 1. Mình đi qua từng bước bằng ví dụ x cộng y nhỏ hơn hoặc bằng 4 cùng hai điều kiện không âm. Chú ý bước 5: miền nghiệm của hệ là phần giao, không phải phần hợp. Cuối cùng ta được tam giác OAB.</aside>
+</section>
+
+<!-- ================= SLIDE 6 — VẤN ĐỀ KHI LÀM THỦ CÔNG ================= -->
+<section class="slide" data-ch="Chương 1">
+  <div class="kick a">Vấn đề</div>
+  <h2 class="h2 a" style="--d:.15">Khi số bất phương trình <span class="grad">tăng lên...</span></h2>
+  <div class="strip">
+    <div class="card a l" style="--d:.5">Số cặp đường biên cần xét: \(\dfrac{n(n-1)}{2}\)</div>
+    <div class="card a z" style="--d:.9">n = 3 →<b data-count="3" data-delay="1200">0</b>cặp</div>
+    <div class="card a z" style="--d:1.2">n = 5 →<b data-count="10" data-delay="1500">0</b>cặp</div>
+    <div class="card a z" style="--d:1.5">n = 8 →<b data-count="28" data-delay="1800">0</b>cặp</div>
+  </div>
+  <div class="cmp">
+    <div class="pc bad card a l" style="--d:1.9"><h3>Làm thủ công</h3><ul>
+      <li><i>✕</i>Nhiều giao điểm cần tính</li><li><i>✕</i>Tính toán lặp lại</li><li><i>✕</i>Dễ nhầm khi kiểm tra đỉnh</li><li><i>✕</i>Vẽ hình mất thời gian</li><li><i>✕</i>Khó kiểm soát khi hệ lớn</li></ul></div>
+    <div class="mid a z" style="--d:2.6"><span>MANUAL</span><span class="arr">→</span><span>COMPUTATIONAL<br>SUPPORT</span></div>
+    <div class="pc ok card a r" style="--d:2.9"><h3>Với công cụ</h3><ul>
+      <li><i>✓</i>Tự động hóa tính toán</li><li><i>✓</i>Kiểm tra nhanh</li><li><i>✓</i>Trực quan hóa</li><li><i>✓</i>Dễ thử nghiệm nhiều hệ</li></ul></div>
+  </div>
+  <p class="warn a" style="--d:3.6">Công cụ <b>hỗ trợ</b> tính toán, <b>không thay thế</b> tư duy toán học.</p>
+  <aside class="note">Với hai hoặc ba bất phương trình thì làm tay vẫn ổn. Nhưng số cặp đường biên tăng rất nhanh: tám bất phương trình đã là hai mươi tám cặp. Đây là lý do nhóm cần một công cụ hỗ trợ. Nhóm nhấn mạnh là hỗ trợ tính toán và kiểm tra, không thay thế việc hiểu toán.</aside>
+</section>
+<!-- >>> PART 2: dán slide 3–6 ngay phía trên dòng này <<< -->
+  <!-- ================= SLIDE 7 — CHƯƠNG 2 ================= -->
+<section class="slide cd" data-ch="Chương 2">
+  <div class="kick a" style="--d:.2">Chương · Python + SymPy</div>
+  <div class="num a" style="--d:.4">02</div>
+  <h2 class="a" style="--d:.7">CÁC LỆNH SYMPY</h2>
+  <p class="a" style="--d:.9">Hộp công cụ cho bài toán</p>
+  <div class="code term t7 a z" style="--d:1.1"><div class="dots"><i></i><i></i><i></i><span>python</span></div>
+<pre class="type" data-lang="py" data-delay="1700">>>> import sympy as sp
+>>> x, y = sp.symbols('x y', real=True)
+>>> bpt = sp.sympify("x + y <= 4")
+>>> bpt.rel_op
+'<='</pre></div>
+  <div class="chain">
+    <div class="n card a" style="--d:1.3">Input</div><span class="ar2 a" style="--d:1.5">→</span>
+    <div class="n card a" style="--d:1.7;border-color:var(--cy)">SymPy</div><span class="ar2 a" style="--d:1.9">→</span>
+    <div class="n card a" style="--d:2.1">Xử lý đại số</div><span class="ar2 a" style="--d:2.3">→</span>
+    <div class="n card a" style="--d:2.5">Kết quả</div>
+  </div>
+  <aside class="note">Sang Chương 2, nhóm giới thiệu hộp công cụ. Quy trình rất đơn giản: đưa dữ liệu vào, SymPy xử lý đại số, rồi trả kết quả. Bên phải là một phiên làm việc nhỏ để mọi người hình dung SymPy dùng ra sao.</aside>
+</section>
+
+<!-- ================= SLIDE 8 — SYMPY LÀ GÌ ================= -->
+<section class="slide" data-ch="Chương 2">
+  <div class="kick a">SymPy là gì?</div>
+  <h2 class="h2 a" style="--d:.15">Thư viện Python cho <span class="grad">tính toán đại số ký hiệu</span></h2>
+  <div class="s8badges">
+    <div class="bd card a z" style="--d:.5"><b>SYMBOLIC</b><span>Làm việc trực tiếp trên biểu thức</span></div>
+    <div class="bd card a z" style="--d:.8"><b>EXACT</b><span>Giữ dạng chính xác, không làm tròn</span></div>
+    <div class="bd card a z" style="--d:1.1"><b>OPEN SOURCE</b><span>Miễn phí, do cộng đồng phát triển</span></div>
+  </div>
+  <div class="s8row">
+    <div class="code a l" style="--d:1.3"><div class="dots"><i></i><i></i><i></i><span>so_sanh.py</span></div>
+<pre class="type" data-lang="py" data-delay="1600">import math
+import sympy as sp
+
+print(math.sqrt(8))
+print(sp.sqrt(8))</pre></div>
+    <div class="c8 card a r" style="--d:1.5">
+      <div class="r8 bad a" style="--d:2.6"><code>math.sqrt(8)</code><span class="v">2.8284271247461903</span><em>gần đúng</em></div>
+      <div class="mid8 a" style="--d:3.1">↓</div>
+      <div class="r8 ok a" style="--d:3.4"><code>sp.sqrt(8)</code><span class="v">\(2\sqrt{2}\)</span><em>chính xác</em></div>
+    </div>
+  </div>
+  <aside class="note">SymPy là thư viện đại số ký hiệu của Python, mã nguồn mở và miễn phí. Điểm khác biệt lớn nhất là nó giữ nguyên dạng chính xác. Hàm math.sqrt cho số thập phân gần đúng, còn sp.sqrt trả về đúng hai căn hai, giống kết quả ta viết trên giấy.</aside>
+    <div class="inst a" style="--d:3.9"><b>CÀI ĐẶT</b><code>pip install sympy numpy matplotlib</code><span>Jupyter Notebook</span><span>Google Colab</span><span>VS Code</span></div>
+</section>
+
+<!-- ================= SLIDE 9 — NHỮNG LỆNH QUAN TRỌNG ================= -->
+<section class="slide" data-ch="Chương 2">
+  <div class="kick a">Những lệnh quan trọng</div>
+  <h2 class="h2 a" style="--d:.15">Năm nhóm lệnh, <span class="grad">mỗi nhóm một nhiệm vụ</span></h2>
+  <div class="g9">
+    <div class="cc card a z" style="--d:.4"><div class="ic">x,y</div><h3>Khai báo</h3><code>symbols()</code><p>Hai ẩn x, y là tọa độ điểm</p></div>
+    <div class="cc card a z" style="--d:.7"><div class="ic">“ ”</div><h3>Đọc bất phương trình</h3><code>sympify()</code><p>Từ chuỗi thành đối tượng toán học</p></div>
+    <div class="cc card a z" style="--d:1.0"><div class="ic">a b</div><h3>Phân tích</h3><code>lhs  rhs  rel_op  coeff()</code><p>Vế trái, vế phải, dấu và hệ số</p></div>
+    <div class="cc card a z" style="--d:1.3"><div class="ic">f(x)</div><h3>Tính toán</h3><code>subs()  solve()  linsolve()</code><p>Thay giá trị, giải hệ để đối chiếu</p></div>
+    <div class="cc ext w2 card a z" style="--d:1.6"><span class="tag9">NGOÀI SYMPY</span><div class="ic">▦</div><h3>Tính số và trực quan hóa</h3><code>NumPy · itertools · Matplotlib</code><p>Giao điểm, các cặp đường biên, vẽ miền nghiệm</p></div>
+  </div>
+  <aside class="note">Nhóm không đi qua từng lệnh. Bốn nhóm đầu thuộc về SymPy: khai báo biến, đọc bất phương trình, phân tích thành hệ số, và tính toán. Nhóm cuối do NumPy, itertools và Matplotlib đảm nhiệm: tính số và vẽ hình. Phân vai này sẽ rất rõ ở các slide sau.</aside>
+</section>
+
+<!-- ================= SLIDE 10 (mới) — symbols ================= -->
+<section class="slide" data-ch="Chương 2">
+  <div class="kick a">Lệnh 1 · Khai báo biến</div>
+  <h2 class="h2 a" style="--d:.15"><span class="grad">symbols</span>: hai ẩn x, y là tọa độ của một điểm</h2>
+  <div class="lay2">
+    <div class="col2">
+      <div class="code a l" style="--d:.4"><div class="dots"><i></i><i></i><i></i><span>symbols.py</span></div>
+<pre class="type" data-lang="py" data-delay="900">x, y = sp.symbols('x y', real=True)
+print(x + y)
+
+u = sp.Symbol('u')
+v = sp.Symbol('v', real=True)
+print(sp.sqrt(u**2))
+print(sp.sqrt(v**2))</pre></div>
+      <div class="code term a l" style="--d:.7"><div class="dots"><i></i><i></i><i></i><span>kết quả chạy chương trình</span></div>
+<pre class="type" data-delay="4200">x + y
+sqrt(u**2)
+Abs(v)</pre></div>
+    </div>
+    <div class="col2">
+      <div class="bx card a r" style="--d:1.0"><h4>Lệnh làm gì</h4><p>Tạo <b>biến ký hiệu</b>. Biểu thức <code>x + y</code> tồn tại mà chưa cần gán giá trị cho x, y.</p></div>
+      <div class="bx mt card a r" style="--d:1.6"><h4>Ý nghĩa toán học</h4><p>x, y là hai ẩn <span class="fm">(<i>x</i>; <i>y</i>)</span>, tọa độ điểm trên mặt phẳng Oxy. <code>real=True</code>: chỉ nhận giá trị thực.</p></div>
+      <div class="bx rs card a r" style="--d:2.2"><h4>Vì sao real=True quan trọng</h4><p>Với v thực, <span class="fm">√(<i>v</i><sup>2</sup>) = |<i>v</i>|</span> nên SymPy rút gọn được. Với u chưa rõ thuộc tập nào, biểu thức được giữ nguyên.</p>
+        <div class="chips"><span class="on">real=True</span><span>positive=True</span><span>nonnegative=True</span><span>integer=True</span></div></div>
+    </div>
+  </div>
+  <aside class="note">Lệnh đầu tiên là khai báo biến. Hai biến x và y chính là hai ẩn, tức tọa độ của một điểm trên mặt phẳng Oxy. Tham số real bằng True không chỉ là hình thức: nó ảnh hưởng đến kết quả rút gọn, như ví dụ căn của v bình phương. Các ràng buộc như không âm hay nguyên tương ứng với điều kiện của bài toán thực tế ở Chương 1.</aside>
+</section>
+
+<!-- ================= SLIDE 11 (mới) — expand / factor / simplify ================= -->
+<section class="slide" data-ch="Chương 2">
+  <div class="kick a">Lệnh 2 · Biến đổi biểu thức</div>
+  <h2 class="h2 a" style="--d:.15"><span class="grad">expand</span> · <span class="grad">factor</span> · <span class="grad">simplify</span>: ba phép biến đổi cơ bản</h2>
+  <div class="lay2">
+    <div class="col2">
+      <div class="code a l" style="--d:.4"><div class="dots"><i></i><i></i><i></i><span>bien_doi.py</span></div>
+<pre class="type" data-lang="py" data-delay="900">print(sp.expand((x + y)**2))
+print(sp.factor(x**2 - y**2))
+print(sp.simplify((x**2 - y**2)/(x - y)))</pre></div>
+      <div class="code term a l" style="--d:.7"><div class="dots"><i></i><i></i><i></i><span>kết quả chạy chương trình</span></div>
+<pre class="type" data-delay="3600">x**2 + 2*x*y + y**2
+(x - y)*(x + y)
+x + y</pre></div>
+      <div class="bx rs card a l" style="--d:3.4"><h4>Trong chương trình</h4><p>Chỉ <code>expand</code> được dùng: chuẩn hóa vế trái để đọc đúng hệ số của x và y. <code>factor</code>, <code>simplify</code> không dùng trực tiếp.</p></div>
+    </div>
+    <div class="col2">
+      <div class="bx card a r" style="--d:1.0"><h4>expand · khai triển</h4><p class="big"><span class="fm">(<i>x</i> + <i>y</i>)<sup>2</sup> = <i>x</i><sup>2</sup> + 2<i>xy</i> + <i>y</i><sup>2</sup></span></p></div>
+      <div class="bx mt card a r" style="--d:1.6"><h4>factor · phân tích nhân tử</h4><p class="big"><span class="fm"><i>x</i><sup>2</sup> − <i>y</i><sup>2</sup> = (<i>x</i> − <i>y</i>)(<i>x</i> + <i>y</i>)</span></p></div>
+      <div class="bx rs card a r" style="--d:2.2"><h4>simplify · rút gọn</h4><p class="big"><span class="fm">(<i>x</i><sup>2</sup> − <i>y</i><sup>2</sup>)/(<i>x</i> − <i>y</i>) = <i>x</i> + <i>y</i></span></p><p>Đúng khi x ≠ y, như cách rút gọn trên giấy.</p></div>
+    </div>
+  </div>
+  <aside class="note">Ba lệnh này cho ra các hằng đẳng thức quen thuộc: khai triển bình phương một tổng, hiệu hai bình phương, và rút gọn phân thức. Với bài toán của nhóm, chỉ lệnh expand thật sự dùng đến, vì nó đưa vế trái của bất phương trình về dạng tổng các đơn thức để đọc đúng hệ số. Hai lệnh còn lại giúp kiểm tra biến đổi.</aside>
+</section>
+<!-- ================= SLIDE 12 (mới) — sympify ================= -->
+<section class="slide" data-ch="Chương 2">
+  <div class="kick a">Lệnh 3 · Đọc bất phương trình từ chuỗi</div>
+  <h2 class="h2 a" style="--d:.15"><span class="grad">sympify</span>: biến chuỗi ký tự thành đối tượng toán học</h2>
+  <div class="lay2">
+    <div class="col2">
+      <div class="code a l" style="--d:.4"><div class="dots"><i></i><i></i><i></i><span>sympify.py</span></div>
+<pre class="type" data-lang="py" data-delay="900" style="font-size:23px">bt = sp.sympify("2*x - y + 1", locals={'x': x, 'y': y})
+print(bt)
+print(type(bt))
+bpt = sp.sympify("x + y &lt;= 2", locals={'x': x, 'y': y})
+print(bpt)
+print(type(bpt))</pre></div>
+      <div class="code term a l" style="--d:.7"><div class="dots"><i></i><i></i><i></i><span>kết quả chạy chương trình</span></div>
+<pre class="type" data-delay="3800" style="font-size:23px">2*x - y + 1
+&lt;class 'sympy.core.add.Add'&gt;
+x + y &lt;= 2
+&lt;class 'sympy.core.relational.LessThan'&gt;</pre></div>
+    </div>
+    <div class="col2">
+      <div class="bx card a r" style="--d:1.0"><h4>Lệnh làm gì</h4><p>Nhận một <b>chuỗi</b> như <code>"x + y &lt;= 2"</code> và trả về <b>đối tượng</b> SymPy: biểu thức <code>Add</code>, hoặc quan hệ <code>LessThan</code> (dấu ≤).</p></div>
+      <div class="bx mt card a r" style="--d:1.6"><h4>Ý nghĩa toán học</h4>
+        <div class="flow2"><span>"x + y &lt;= 2"</span><i>→</i><span>vế trái | vế phải | dấu</span></div>
+        <p>Với máy tính, chuỗi ban đầu chưa mang nghĩa toán học. Mọi thao tác sau đều làm việc trên <b>đối tượng</b>, không trên chuỗi.</p></div>
+      <div class="bx rs card a r" style="--d:2.2"><h4>Vì sao cần locals</h4>
+        <div class="tf"><span>sympify("x + 1") == x + 1</span><em class="no">False</em></div>
+        <div class="tf"><span>sympify("x + 1", locals={'x': x}) == x + 1</span><em class="yes">True</em></div>
+        <p style="font-size:23px;color:var(--mu)">Không có <code>locals</code>, SymPy tự tạo một biến x mới, khác biến x đã khai báo. Chuỗi phải đúng cú pháp Python: <code>*</code> cho phép nhân, <code>**</code> cho lũy thừa.</p></div>
+    </div>
+  </div>
+  <aside class="note">Đây là bước chuyển quan trọng nhất của chương trình. Với máy tính, chuỗi x cộng y nhỏ hơn hoặc bằng 2 chỉ là ký tự. Sau sympify, nó trở thành một đối tượng có vế trái, vế phải và dấu. Tham số locals báo cho SymPy biết x, y trong chuỗi chính là hai biến đã khai báo. Nếu bỏ đi, SymPy tạo biến mới và phép so sánh cho kết quả False.</aside>
+</section>
+
+<!-- ================= SLIDE 13 (mới) — Eq / rel_op / lhs / rhs ================= -->
+<section class="slide" data-ch="Chương 2">
+  <div class="kick a">Lệnh 4 · Nhận biết dấu và hai vế</div>
+  <h2 class="h2 a" style="--d:.15"><span class="grad">rel_op</span> · <span class="grad">lhs</span> · <span class="grad">rhs</span>: ba thành phần của một bất phương trình</h2>
+  <div class="lay2">
+    <div class="col2">
+      <div class="code a l" style="--d:.4"><div class="dots"><i></i><i></i><i></i><span>quan_he.py</span></div>
+<pre class="type" data-lang="py" data-delay="900" style="font-size:23px">bpt = sp.sympify("x - y &lt; 3", locals={'x': x, 'y': y})
+print(type(bpt).__name__)
+print(bpt.rel_op)
+print(bpt.lhs)
+print(bpt.rhs)
+print(isinstance(x + y, sp.core.relational.Relational))</pre></div>
+      <div class="code term a l" style="--d:.7"><div class="dots"><i></i><i></i><i></i><span>kết quả chạy chương trình</span></div>
+<pre class="type" data-delay="3500" style="font-size:23px">StrictLessThan
+&lt;
+x - y
+3
+False</pre></div>
+    </div>
+    <div class="col2">
+      <div class="bx card a r" style="--d:1.0"><h4>Bốn dấu, bốn lớp đối tượng</h4>
+        <div class="t13">
+          <div class="hh">DẤU</div><div class="hh">LỚP ĐỐI TƯỢNG</div><div class="hh" style="text-align:right">REL_OP</div>
+          <div class="sg">&gt;</div><div class="cl">StrictGreaterThan</div><div class="rr">'&gt;'</div>
+          <div class="sg">&lt;</div><div class="cl">StrictLessThan</div><div class="rr">'&lt;'</div>
+          <div class="sg">≥</div><div class="cl">GreaterThan</div><div class="rr">'&gt;='</div>
+          <div class="sg">≤</div><div class="cl">LessThan</div><div class="rr">'&lt;='</div>
+        </div></div>
+      <div class="bx mt card a r" style="--d:1.6"><h4>Ý nghĩa toán học</h4><p>Vế trái, vế phải, dấu ứng với <code>lhs</code>, <code>rhs</code>, <code>rel_op</code>. Dấu nghiêm ngặt (&gt;, &lt;) cho đường biên <b>nét đứt</b>; dấu ≥, ≤ cho <b>nét liền</b>. Chỉ cần đọc <code>rel_op</code> là chương trình biết cách vẽ.</p></div>
+      <div class="bx rs card a r" style="--d:2.2"><h4>Kiểm tra đầu vào</h4><p><code>isinstance(..., Relational)</code> phát hiện biểu thức không phải bất phương trình. <code>Eq</code> có <code>rel_op</code> là <code>'=='</code>, nên chương trình từ chối phương trình.</p></div>
+    </div>
+  </div>
+  <aside class="note">Một bất phương trình gồm đúng ba thành phần: vế trái, vế phải và dấu so sánh. SymPy lưu chúng thành lhs, rhs và rel_op, và phân biệt bốn lớp đối tượng cho bốn dấu. Điều này có ý nghĩa rất thực tế: chỉ cần đọc rel_op, chương trình biết đường biên cần vẽ nét liền hay nét đứt. Lệnh isinstance còn giúp phát hiện khi người dùng nhập sai.</aside>
+</section>
+
+<!-- ================= SLIDE 14 (mới) — coeff / subs ================= -->
+<section class="slide" data-ch="Chương 2">
+  <div class="kick a">Lệnh 5 · Trích hệ số và thay giá trị</div>
+  <h2 class="h2 a" style="--d:.15"><span class="grad">coeff</span> · <span class="grad">subs</span>: từ bất phương trình đến <span class="grad">(a, b, c)</span></h2>
+  <div class="lay2">
+    <div class="col2">
+      <div class="code a l" style="--d:.4"><div class="dots"><i></i><i></i><i></i><span>he_so.py</span></div>
+<pre class="type" data-lang="py" data-delay="900" style="font-size:22px">bpt = sp.sympify("3*x + 2*y &lt;= 6", locals={'x': x, 'y': y})
+hieu = sp.expand(bpt.lhs - bpt.rhs)
+print(hieu)
+a = hieu.coeff(x)
+b = hieu.coeff(y)
+d = hieu.subs({x: 0, y: 0})
+c = -d
+print(a, b, c)</pre></div>
+      <div class="code term a l" style="--d:.7"><div class="dots"><i></i><i></i><i></i><span>kết quả chạy chương trình</span></div>
+<pre class="type" data-delay="3900" style="font-size:23px">3*x + 2*y - 6
+3 2 6</pre></div>
+    </div>
+    <div class="col2">
+      <div class="bx card a r" style="--d:1.0"><h4>Ý nghĩa toán học</h4>
+        <div class="flow2"><span>vế trái − vế phải</span><i>→</i><span>ax + by + d</span><i>→</i><span>c = −d</span></div>
+        <p>Hiệu là <span class="fm">3<i>x</i> + 2<i>y</i> − 6</span>, nên <span class="fm"><i>a</i> = 3, <i>b</i> = 2, <i>c</i> = 6</span> và đường biên là <span class="fm">3<i>x</i> + 2<i>y</i> = 6</span>. Biến không xuất hiện thì hệ số bằng 0 (như <span class="fm"><i>x</i> ≥ 0</span> có <i>b</i> = 0).</p></div>
+      <div class="bx mt card a r" style="--d:1.6"><h4>subs còn dùng để thử điểm</h4>
+        <div class="tf"><span>x + y ≤ 2 tại (1; 0): 1 + 0 ≤ 2</span><em class="yes">True</em></div>
+        <div class="tf"><span>x + y ≤ 2 tại (3; 1): 3 + 1 ≤ 2</span><em class="no">False</em></div>
+        <p style="font-size:23px;color:var(--mu)">Đây là phương pháp điểm thử ở Chương 1. Với cả hệ, <code>all(...)</code> thể hiện phép giao các tập nghiệm.</p></div>
+      <div class="bx rs card a r" style="--d:2.2"><h4>Lưu ý sai số</h4>
+        <div class="tf"><span>0.1 + 0.2 &lt;= 0.3</span><em class="no">False</em></div>
+        <p style="font-size:23px">Số thực lưu gần đúng, nên chương trình tự viết hàm so sánh có <b>ngưỡng sai số</b> 10<sup>−7</sup> thay vì dùng trực tiếp <code>subs</code>.</p></div>
+    </div>
+  </div>
+  <aside class="note">Đây là thao tác đầu tiên của quy trình giải: đưa bất phương trình về dạng chuẩn và đọc ba hệ số. Ta lấy vế trái trừ vế phải, khai triển bằng expand, rồi dùng coeff để đọc hệ số của x và y. Lệnh subs thay x bằng 0, y bằng 0 để lấy số hạng tự do, đổi dấu thì được c. Lệnh subs cũng dùng để thử điểm, nhưng với số thực cần ngưỡng sai số, vì máy tính lưu số thực gần đúng.</aside>
+</section>
+
+<!-- ================= SLIDE 15 (mới) — solve / linsolve ================= -->
+<section class="slide" data-ch="Chương 2">
+  <div class="kick a">Lệnh 6 · Giải phương trình và hệ</div>
+  <h2 class="h2 a" style="--d:.15"><span class="grad">solve</span> · <span class="grad">linsolve</span>: tìm giao điểm hai đường biên</h2>
+  <div class="lay2 c15">
+    <div class="col2">
+      <div class="code a l" style="--d:.4"><div class="dots"><i></i><i></i><i></i><span>giai_he.py</span></div>
+<pre class="type" data-lang="py" data-delay="900" style="font-size:22px">pt1, pt2 = sp.Eq(x + y, 2), sp.Eq(x - y, 1)
+print(sp.solve(sp.Eq(2*x - 4, 0), x))
+print(sp.solve(pt1, y))
+print(sp.solve([pt1, pt2], [x, y]))
+print(sp.linsolve([pt1, pt2], (x, y)))</pre></div>
+      <div class="code term a l" style="--d:.7"><div class="dots"><i></i><i></i><i></i><span>kết quả chạy chương trình</span></div>
+<pre class="type" data-delay="4200" style="font-size:22px">[2]
+[2 - x]
+{x: 3/2, y: 1/2}
+{(3/2, 1/2)}</pre></div>
+      <div class="bx rs card a l" style="--d:3.2"><h4>Trong chương trình</h4><p><code>solve</code>, <code>linsolve</code> không dùng trực tiếp: chỉ để <b>đối chiếu</b> với <code>np.linalg.solve</code>.</p></div>
+    </div>
+    <div class="col2">
+      <div class="bx card a r" style="--d:1.0"><h4>Ý nghĩa toán học</h4><p>Hệ <span class="fm"><i>x</i> + <i>y</i> = 2, <i>x</i> − <i>y</i> = 1</span> cho giao điểm <span class="fm">(3/2 ; 1/2)</span> của hai đường biên, viết bằng <b>phân số chính xác</b>. Đây là thao tác tìm đỉnh của miền nghiệm ở Chương 1.</p></div>
+      <div class="bx mt card a r sub15" style="--d:1.6"><h4>Bất phương trình theo một ẩn</h4>
+        <div class="tf"><span>solve_univariate_inequality(x + y &lt;= 2, x)</span></div>
+        <div class="tf" style="color:var(--gr)"><span>→ x &lt;= 2 - y</span></div>
+        <div class="tf"><span>reduce_inequalities([x + y &lt;= 2, x - y &lt; 3], [x])</span></div>
+        <div class="tf" style="color:var(--gr)"><span>→ (x &lt; y + 3) &amp; (x &lt;= 2 - y)</span></div>
+        <p>Dấu &amp; là "và": phép giao các nửa mặt phẳng.</p></div>
+      <div class="bx wn card a r" style="--d:2.2"><h4>Giới hạn của SymPy</h4><p>Giải đồng thời theo cả hai ẩn: <code>NotImplementedError</code>. SymPy <b>không</b> cho danh sách đỉnh, không biết miền bị chặn hay không, không vẽ hình. Vì vậy cần NumPy và Matplotlib.</p></div>
+    </div>
+  </div>
+  <aside class="note">Hai lệnh solve và linsolve giải phương trình và hệ phương trình. Ví dụ này giải hệ x cộng y bằng 2 và x trừ y bằng 1, cho giao điểm ba phần hai, một phần hai, viết bằng phân số chính xác. Đây chính là thao tác tìm đỉnh. Tuy nhiên, SymPy chỉ diễn đạt miền nghiệm bằng các bất đẳng thức, không cho đỉnh và không vẽ hình. Đó là lý do chương trình cần thêm NumPy và Matplotlib.</aside>
+</section>
+
+<!-- ================= SLIDE 16 (mới) — NumPy / itertools / Matplotlib ================= -->
+<section class="slide" data-ch="Chương 2">
+  <div class="kick a">Công cụ phối hợp</div>
+  <h2 class="h2 a" style="--d:.15">Ba công cụ <span class="grad">đảm nhiệm phần còn lại</span></h2>
+  <div class="g3">
+    <div class="tl card a z" style="--d:.4">
+      <div class="hd"><div class="ic">NP</div><div><h3>NumPy</h3><div class="role">Tính toán số</div></div></div>
+      <div class="code"><pre class="type" data-lang="py" data-delay="1000">A = np.array([[1., 1.], [1., -1.]])
+C = np.array([2., 1.])
+np.linalg.det(A)      # -2.0
+np.linalg.solve(A, C) # [1.5 0.5]</pre></div>
+      <p>Định thức khác 0: hai đường cắt nhau tại <b>một điểm</b>. Gần 0: song song hoặc trùng.</p>
+      <div class="chips"><span>meshgrid</span><span>where</span><span>arctan2</span></div>
+    </div>
+    <div class="tl card a z" style="--d:.8">
+      <div class="hd"><div class="ic">it</div><div><h3>itertools</h3><div class="role">Liệt kê các cặp</div></div></div>
+      <div class="code"><pre class="type" data-lang="py" data-delay="1500">itertools.combinations(
+    ['d1', 'd2', 'd3'], 2)
+# ('d1','d2') ('d1','d3')
+# ('d2','d3')</pre></div>
+      <p>Với n đường biên có <span class="fm"><i>n</i>(<i>n</i> − 1)/2</span> cặp, mỗi cặp cho một giao điểm ứng viên làm đỉnh.</p>
+    </div>
+    <div class="tl card a z" style="--d:1.2">
+      <div class="hd"><div class="ic">plt</div><div><h3>Matplotlib</h3><div class="role">Trực quan hóa</div></div></div>
+      <div class="code"><pre class="type" data-lang="py" data-delay="2000">nhan = np.where(X + Y <= 2, 1, 0)
+ax.contourf(X, Y, nhan,
+            levels=[-0.5, 0.5])
+ax.axline((0, 2), (2, 0))</pre></div>
+      <p>Phần <b>bị tô</b> là phần không phải nghiệm; miền nghiệm của hệ được <b>để trắng</b>.</p>
+      <div class="chips"><span>subplots</span><span>scatter</span><span>annotate</span></div>
+    </div>
+  </div>
+  <p class="msg10 a" style="--d:2.6">SymPy lo phần <b>đại số</b>. Phần <b>tính số</b> và <b>vẽ hình</b> thuộc về ba công cụ này.</p>
+  <aside class="note">SymPy tính chính xác nhưng chậm hơn khi phải lặp lại nhiều lần và không có chức năng vẽ. Vì vậy chương trình phối hợp thêm ba công cụ. NumPy giải hệ bằng ma trận và kiểm tra điểm hàng loạt. Itertools liệt kê mọi cặp đường biên. Matplotlib tô phần không phải nghiệm, để trắng miền nghiệm, và vẽ đường biên. Phân vai này sẽ hiện rõ trong chương trình ở Chương 3.</aside>
+</section>
+
+<!-- ================= SLIDE 11 — Sơ đồ các hàm của chương trình ================= -->
+<section class="slide" data-ch="Chương 2">
+  <div class="kick a">Sơ đồ các hàm của chương trình</div>
+  <h2 class="h2 a" style="--d:.15">Một <span class="grad">pipeline</span> phối hợp ba công cụ</h2>
+  <div class="p11">
+    <div class="pipe">
+      <div class="nd card a z" style="--d:.4;--i:0;--c:#A8B3CF"><div class="cir">1</div><h4>Nhập hệ bất phương trình</h4><div class="sb">Dạng chuỗi<br>"x + y &lt;= 4"</div></div>
+      <div class="nd card a z" style="--d:.6;--i:1;--c:#22d3ee"><div class="cir">2</div><h4>Đối tượng SymPy</h4><div class="sb">sympify</div></div>
+      <div class="nd card a z" style="--d:.8;--i:2;--c:#22d3ee"><div class="cir">3</div><h4>Hệ số (a, b, c) và dấu</h4><div class="sb">expand · coeff · rel_op</div><div class="fx">phan_tich_bpt</div></div>
+      <div class="nd card a z" style="--d:1.0;--i:3;--c:#3b82f6"><div class="cir">4</div><h4>Giao điểm mọi cặp đường biên</h4><div class="sb">itertools · np.linalg.solve</div><div class="fx">tim_dinh_mien_nghiem</div></div>
+      <div class="nd card a z" style="--d:1.2;--i:4;--c:#3b82f6"><div class="cir">5</div><h4>Lọc đỉnh, kiểm tra điểm</h4><div class="sb">ngưỡng sai số · np.arctan2</div><div class="fx">sap_xep_nguoc_kim_dong_ho</div></div>
+      <div class="nd card a z" style="--d:1.4;--i:5;--c:#8b5cf6"><div class="cir">6</div><h4>Vẽ miền nghiệm</h4><div class="sb">meshgrid · contourf · axline</div><div class="fx">ve_ban_do</div></div>
+      <div class="pk"></div>
+    </div>
+    <div class="bands">
+      <div class="bnd a" style="--d:1.7;--c:#A8B3CF">Đầu vào</div>
+      <div class="bnd a" style="--d:1.9;--c:#22d3ee;grid-column:span 2">SymPy · đại số ký hiệu</div>
+      <div class="bnd a" style="--d:2.1;--c:#3b82f6;grid-column:span 2">NumPy · itertools · tính số</div>
+      <div class="bnd a" style="--d:2.3;--c:#8b5cf6">Matplotlib</div>
+    </div>
+    <p class="msg11 a" style="--d:2.6">SymPy lo phần <b>đại số</b>. Tìm đỉnh và vẽ hình do <b>NumPy, itertools, Matplotlib</b> đảm nhiệm.</p>
+  </div>
+  <aside class="note">Đây là toàn cảnh chương trình. Chuỗi bất phương trình đi vào SymPy để thành hệ số và dấu. Sau đó NumPy và itertools tính giao điểm, lọc đỉnh. Cuối cùng Matplotlib vẽ miền nghiệm. Nhóm nhấn mạnh: SymPy không tự tìm và vẽ miền nghiệm, mà đảm nhiệm đúng phần đại số.</aside>
+</section>
+<!-- >>> PART 3: dán slide 7–11 <<< -->
+
+<!-- ================= SLIDE 17 — CHƯƠNG 3 ================= -->
+<section class="slide cd" data-ch="Chương 3" style="padding-bottom:110px">
+  <div class="kick a" style="--d:.2">Chương</div>
+  <div class="num a" style="--d:.4">03</div>
+  <h2 class="a" style="--d:.7">ỨNG DỤNG SYMPY</h2>
+  <p class="a" style="--d:.9">Tổng hợp các lệnh thành một chương trình hoàn chỉnh</p>
+  <div class="v12">
+    <div class="s12 card a r" style="--d:1.1;--c:#22d3ee"><i>Σ</i>MATHEMATICS</div><div class="ar a" style="--d:1.4">↓</div>
+    <div class="s12 card a r" style="--d:1.7;--c:#3b82f6"><i>⇄</i>ALGORITHM</div><div class="ar a" style="--d:2.0">↓</div>
+    <div class="s12 card a r" style="--d:2.3;--c:#8b5cf6"><i>&lt;/&gt;</i>PYTHON</div><div class="ar a" style="--d:2.6">↓</div>
+    <div class="s12 card a r" style="--d:2.9;--c:#34d399"><i>▦</i>VISUALIZATION</div>
+  </div>
+  <aside class="note">Sang Chương 3, nhóm tổng hợp các lệnh đã học ở Chương 2 thành một chương trình hoàn chỉnh. Đi từ bài toán toán học, đến thuật toán, đến mã Python, và cuối cùng là hình vẽ miền nghiệm. Toàn bộ mã nguồn được đăng trên kho GitHub của nhóm.</aside>
+</section>
+
+<!-- ================= SLIDE 18 (mới) — BẢNG TỔNG HỢP LỆNH → HÀM ================= -->
+<section class="slide" data-ch="Chương 3">
+  <div class="kick a">Tổng hợp</div>
+  <h2 class="h2 a" style="--d:.15">Các lệnh ở Chương 2 <span class="grad">nằm ở đâu trong chương trình?</span></h2>
+  <div class="map">
+    <div class="mc card a z" style="--d:.4;--c:#22d3ee"><h3>SYMPY · ĐẠI SỐ</h3>
+      <div class="mr a" style="--d:.8"><span>symbols</span><b>→ khai báo hai ẩn x, y</b></div>
+      <div class="mr a" style="--d:1.0"><span>sympify</span><b>→ phan_tich_bpt</b></div>
+      <div class="mr a" style="--d:1.2"><span>isinstance · Relational</span><b>→ phan_tich_bpt</b></div>
+      <div class="mr a" style="--d:1.4"><span>rel_op · lhs · rhs</span><b>→ phan_tich_bpt</b></div>
+      <div class="mr a" style="--d:1.6"><span>expand · coeff · subs</span><b>→ phan_tich_bpt</b></div>
+    </div>
+    <div class="mc card a z" style="--d:.7;--c:#3b82f6"><h3>NUMPY · ITERTOOLS · TÍNH SỐ</h3>
+      <div class="mr a" style="--d:1.9"><span>np.array · det · solve</span><b>→ giao_diem_hai_duong</b></div>
+      <div class="mr a" style="--d:2.1"><span>itertools.combinations</span><b>→ tim_dinh_mien_nghiem</b></div>
+      <div class="mr a" style="--d:2.3"><span>np.arctan2</span><b>→ sap_xep_nguoc_kim_dong_ho</b></div>
+    </div>
+    <div class="mc card a z" style="--d:1.0;--c:#8b5cf6"><h3>MATPLOTLIB · VẼ HÌNH</h3>
+      <div class="mr a" style="--d:2.6"><span>np.linspace · meshgrid · where</span><b>→ ve_ban_do</b></div>
+      <div class="mr a" style="--d:2.8"><span>contourf · axline</span><b>→ ve_ban_do</b></div>
+      <div class="mr a" style="--d:3.0"><span>scatter · annotate · show</span><b>→ ve_ban_do</b></div>
+    </div>
+  </div>
+  <div class="nu card a" style="--d:3.4"><b>KHÔNG DÙNG TRỰC TIẾP</b><span>factor</span><span>simplify</span><span>solve</span><span>linsolve</span><span>solve_univariate_inequality</span><em>→ chỉ để giải thích và đối chiếu</em></div>
+  <p class="msg10 a" style="--d:3.8"><b>giai_he_bpt()</b> gọi các hàm trên để giải · <b>ve_ban_do()</b> để vẽ</p>
+  <aside class="note">Đây là bảng tổng hợp. Mỗi lệnh ở Chương 2 phục vụ một hàm của chương trình. Cột SymPy chủ yếu nằm trong hàm phan_tich_bpt: đọc chuỗi, tách dấu, lấy hệ số. Cột NumPy và itertools lo giải giao điểm, liệt kê cặp đường biên và sắp xếp đỉnh. Matplotlib nằm trong hàm ve_ban_do. Những lệnh như factor hay solve không dùng trực tiếp, chỉ để đối chiếu kết quả. Hàm giai_he_bpt gọi các hàm trên để giải.</aside>
+</section>
+
+<!-- ================= SLIDE 13 — CÁC DẠNG BÀI TOÁN ================= -->
+<section class="slide" data-ch="Chương 3">
+  <div class="kick a">Các dạng bài toán</div>
+  <h2 class="h2 a" style="--d:.15">Bốn dạng bài toán, <span class="grad">một quy trình chung</span></h2>
+  <div class="g13">
+    <div class="tp card a z" style="--d:.4"><div class="tg">DẠNG 1</div><h3>Miền nghiệm là đa giác bị chặn</h3>
+      <svg viewBox="0 0 320 240">
+        <polygon class="sv" points="80,185 240,165 150,60" fill="#22d3ee" fill-opacity=".3" style="--d:1"/>
+        <path class="dr" pathLength="1" d="M80 185L150 60L240 165" stroke="#22d3ee" stroke-width="3.5" stroke-linejoin="round" style="--d:1"/>
+        <path class="sv" d="M80 185L240 165" stroke="#22d3ee" stroke-width="3.5" stroke-dasharray="9 8" style="--d:1.6"/>
+        <g class="pp" style="--d:2"><circle cx="80" cy="185" r="7" fill="#fff"/><circle cx="240" cy="165" r="7" fill="#fff"/><circle cx="150" cy="60" r="7" fill="#fff"/></g>
+      </svg><div class="ex">Ví dụ 3.1 · có cạnh bị loại</div></div>
+    <div class="tp card a z" style="--d:.7"><div class="tg">DẠNG 2</div><h3>Miền nghiệm không bị chặn</h3>
+      <svg viewBox="0 0 320 240">
+        <polygon class="sv" points="140,90 320,180 320,240 -10,240" fill="#8b5cf6" fill-opacity=".32" style="--d:1.3"/>
+        <path class="dr" pathLength="1" d="M140 90L320 180" stroke="#a78bfa" stroke-width="3.5" style="--d:1.3"/>
+        <path class="sv" d="M140 90L-10 240" stroke="#a78bfa" stroke-width="3.5" stroke-dasharray="9 8" style="--d:1.6"/>
+        <g class="pp" style="--d:2.3"><circle cx="140" cy="90" r="7" fill="#fff"/></g>
+      </svg><div class="ex">Ví dụ 3.2 · mở rộng vô hạn</div></div>
+    <div class="tp card a z" style="--d:1.0"><div class="tg">DẠNG 3</div><h3>Kiểm tra điểm có thuộc miền nghiệm</h3>
+      <svg viewBox="0 0 320 240">
+        <polygon class="sv" points="150,200 250,60 60,60" fill="#3b82f6" fill-opacity=".3" style="--d:1.6"/>
+        <path class="dr" pathLength="1" d="M150 200L250 60H60Z" stroke="#60a5fa" stroke-width="3.5" stroke-linejoin="round" style="--d:1.6"/>
+        <g class="pp" style="--d:2.6"><circle cx="150" cy="110" r="8" fill="#34d399"/><text x="164" y="108" fill="#34d399" font-size="20">P</text></g>
+        <g class="pp" style="--d:2.9"><path d="M267 177l16 16M283 177l-16 16" stroke="#f87171" stroke-width="3.5"/><text x="290" y="196" fill="#f87171" font-size="20">Q</text></g>
+      </svg><div class="ex">Ví dụ 3.3 · thuộc / không thuộc</div></div>
+    <div class="tp card a z" style="--d:1.3"><div class="tg">DẠNG 4</div><h3>Bài toán mô hình hóa thực tế</h3>
+      <svg viewBox="0 0 320 240">
+        <polygon class="sv" points="50,200 250,200 200,100 50,50" fill="#34d399" fill-opacity=".25" style="--d:1.9"/>
+        <path class="dr" pathLength="1" d="M50 200H250L200 100L50 50Z" stroke="#34d399" stroke-width="3.5" stroke-linejoin="round" style="--d:1.9"/>
+        <g class="sv" style="--d:3" fill="#fff" fill-opacity=".75"><circle cx="50" cy="200" r="3.5"/><circle cx="100" cy="200" r="3.5"/><circle cx="150" cy="200" r="3.5"/><circle cx="200" cy="200" r="3.5"/><circle cx="250" cy="200" r="3.5"/><circle cx="50" cy="150" r="3.5"/><circle cx="100" cy="150" r="3.5"/><circle cx="150" cy="150" r="3.5"/><circle cx="200" cy="150" r="3.5"/><circle cx="50" cy="100" r="3.5"/><circle cx="100" cy="100" r="3.5"/><circle cx="150" cy="100" r="3.5"/><circle cx="50" cy="50" r="3.5"/></g>
+        <g class="pp" style="--d:3.4"><circle cx="200" cy="100" r="8" fill="#fff"/></g>
+      </svg><div class="ex">Ví dụ 3.4 · bài toán sản xuất</div></div>
+  </div>
+  <p class="msg10 a" style="--d:3.8">Cả bốn dạng đều dùng <b>cùng một quy trình nhập liệu</b>: viết hệ bất phương trình dưới dạng chuỗi.</p>
+  <aside class="note">Chương 3 có bốn dạng bài. Dạng một là đa giác bị chặn, trong đó có cạnh bị loại vì bất phương trình chặt. Dạng hai là miền không bị chặn. Dạng ba là kiểm tra một điểm có thuộc miền nghiệm không. Dạng bốn là bài toán thực tế, đối chiếu với lời giải tay ở Chương 1. Hình ở đây chỉ minh họa dạng miền.</aside>
+</section>
+
+<!-- ================= SLIDE 14 — VÍ DỤ MINH HỌA (nhấn → 4 lần) ================= -->
+<section class="slide" data-ch="Chương 3">
+  <div class="kick a">Ví dụ minh họa</div>
+  <h2 class="h2 a" style="--d:.15">Từ bài toán đến <span class="grad">miền nghiệm</span></h2>
+  <div class="s14">
+    <div>
+      <div class="col14h a" style="--d:.3">Bài toán</div>
+      <div class="prob card a l" style="--d:.5">\(\begin{cases}x+y\le 4\\ x\ge 0\\ y\ge 0\end{cases}\)</div>
+      <div class="goal card a l" style="--d:.8">Cần tìm: <b>hình dạng</b> miền nghiệm và <b>tọa độ các đỉnh</b>.</div>
+    </div>
+    <div>
+      <div class="col14h a" style="--d:.5">Ý tưởng thuật toán</div>
+      <div class="alg a" style="--d:.7">
+        <div class="stp card" data-f="1"><b>1</b><div>Vẽ các đường biên<small>x + y = 4 · x = 0 · y = 0</small></div></div>
+        <div class="stp card" data-f="2"><b>2</b><div>Giao điểm từng cặp đường biên<small>itertools · np.linalg.solve</small></div></div>
+        <div class="stp card" data-f="3"><b>3</b><div>Giữ điểm thỏa các bất phương trình còn lại<small>so sánh có ngưỡng sai số</small></div></div>
+        <div class="stp card" data-f="4"><b>4</b><div>Sắp xếp đỉnh, tô miền nghiệm<small>np.arctan2 · contourf</small></div></div>
+        <div class="hint">Nhấn → để chạy từng bước</div>
+      </div>
+    </div>
+    <div class="a r" style="--d:.9">
+      <div class="col14h">Kết quả</div>
+      <svg viewBox="0 0 640 560" fill="none" style="width:100%;height:auto;display:block">
+        <defs><linearGradient id="rg14" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee" stop-opacity=".6"/><stop offset="1" stop-color="#8b5cf6" stop-opacity=".5"/></linearGradient></defs>
+        <path d="M50 470H600M110 520V20" stroke="#A8B3CF" stroke-opacity=".5" stroke-width="2"/>
+        <text x="604" y="462" fill="#A8B3CF" font-size="22" font-style="italic">x</text>
+        <text x="122" y="34" fill="#A8B3CF" font-size="22" font-style="italic">y</text>
+        <polygon class="q q3" points="110,470 110,70 510,470" fill="url(#rg14)" stroke="#fff" stroke-opacity=".8" stroke-width="2"/>
+        <path class="d14" pathLength="1" d="M110 520V20" stroke="#8b5cf6" stroke-width="4"/>
+        <path class="d14" pathLength="1" d="M50 470H600" stroke="#3b82f6" stroke-width="4"/>
+        <path class="d14" pathLength="1" d="M70 30L550 510" stroke="#22d3ee" stroke-width="4" stroke-linecap="round"/>
+        <text class="q q1" x="330" y="268" fill="#22d3ee" font-size="22" font-family="JetBrains Mono">x + y = 4</text>
+        <g class="q q2"><circle cx="110" cy="470" r="9" fill="#fff"/><circle cx="110" cy="70" r="9" fill="#fff"/><circle cx="510" cy="470" r="9" fill="#fff"/></g>
+        <g class="q q4" fill="#fff" font-size="23" font-weight="600"><text x="50" y="504">O(0; 0)</text><text x="128" y="80">A(0; 4)</text><text x="470" y="506">B(4; 0)</text></g>
+      </svg>
+      <div class="res14 card q q4"><span>O(0; 0)</span><span>A(0; 4)</span><span>B(4; 0)</span><em>tam giác OAB</em></div>
+    </div>
+  </div>
+  <aside class="note">Lấy lại hệ x cộng y nhỏ hơn hoặc bằng 4 cùng hai điều kiện không âm. Nhấn từng bước: vẽ ba đường biên, lấy giao điểm từng cặp, giữ lại những điểm thỏa các bất phương trình còn lại, rồi sắp xếp đỉnh và tô miền. Ở ví dụ này cả ba giao điểm đều hợp lệ, cho tam giác OAB. Với hệ lớn hơn, chương trình làm đúng quy trình này một cách có hệ thống.</aside>
+</section>
+
+<!-- ================= SLIDE 15 — CODE → KẾT QUẢ ================= -->
+<section class="slide" data-ch="Chương 3">
+  <div class="kick a">Code → Processing → Graph</div>
+  <h2 class="h2 a" style="--d:.15">Ba dòng code, <span class="grad">một miền nghiệm</span></h2>
+  <div class="s15">
+    <div class="l15">
+      <div class="code a l" style="--d:.4"><div class="dots"><i></i><i></i><i></i><span>① CODE · bài toán sản xuất (Ví dụ 3.4)</span></div>
+<pre class="type" data-lang="py" data-delay="1000">he_bpt_chuoi = ["x &gt;= 0", "y &gt;= 0",
+                "2*x + y &lt;= 8", "x + 3*y &lt;= 9"]
+danh_sach_bpt, mo_ta = giai_he_bpt(
+    he_bpt_chuoi, diem_test=[(2, 1), (5, 5)])
+ve_ban_do(danh_sach_bpt, mo_ta,
+          diem_test=[(2, 1), (5, 5)])</pre></div>
+      <div class="code term a l" style="--d:.7"><div class="dots"><i></i><i></i><i></i><span>② PROCESSING · kết quả chạy chương trình</span></div>
+<pre class="type" data-delay="4300">HE BAT PHUONG TRINH BAC NHAT HAI AN:
+  d1: x &gt;= 0
+  d2: y &gt;= 0
+  d3: 2*x + y &lt;= 8
+  d4: x + 3*y &lt;= 9
+
+MIEN NGHIEM:
+  =&gt; Mien nghiem cua he bat phuong trinh tren la da giac ABCD,
+     voi A(0, 0), B(4, 0), C(3, 2), D(0, 3).
+
+KIEM TRA CAC DIEM TEST:
+  Diem (2, 1): THUOC mien nghiem
+  Diem (5, 5): KHONG thuoc mien nghiem (vi pham: d3, d4)</pre></div>
+    </div>
+        <div class="r15 card a r" style="--d:.9">
+      <div class="hd15">③ GRAPH · ve_ban_do()</div>
+      <div class="slot sv" style="--d:6.5">
+        <img src="ve_ban_do.png" alt="Miền nghiệm do ve_ban_do() vẽ" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+        <div class="ph"><div><b>CHÈN ẢNH TẠI ĐÂY</b>Lưu ảnh với tên ve_ban_do.png<br>cùng thư mục với index.html</div></div>
+      </div>
+      <div class="lg15 sv" style="--d:7.2"><span style="color:#34d399">● (2; 1) THUỘC</span><span style="color:#f87171">✕ (5; 5) KHÔNG THUỘC · vi phạm d3, d4</span></div>
+      <div class="cap15 sv" style="--d:7.5">Tên đỉnh do chương trình đặt: A, B, C, D (làm tay: O, A, B, C).</div>
+    </div>
+  </div>
+  <aside class="note">Chỉ cần ba lệnh: khai báo hệ bất phương trình dưới dạng chuỗi, gọi hàm giải, rồi gọi hàm vẽ. Chương trình in ra các đỉnh và kiểm tra điểm thử, ở đây điểm (5; 5) bị loại vì vi phạm cùng lúc d3 và d4. Cuối cùng là hình miền nghiệm. Đỉnh trùng với lời giải tay, chỉ khác cách đặt tên.</aside>
+</section>
+<!-- >>> PART 4: dán slide 12–15 <<< -->
+
+<!-- ================= SLIDE 23 (mới) — MÃ NGUỒN TRÊN GITHUB ================= -->
+<section class="slide" data-ch="Chương 3">
+  <div class="kick a">Mã nguồn</div>
+  <h2 class="h2 a" style="--d:.15">Toàn bộ mã nguồn <span class="grad">đăng tại kho GitHub của nhóm</span></h2>
+  <div class="gh">
+    <div class="rp card a l" style="--d:.5">
+      <div class="own">duongtam230905-arch /<b>Hebatphuongtrinhbacnhathaian</b></div>
+      <div class="ds">Ứng dụng SymPy vào bài toán hệ bất phương trình bậc nhất hai ẩn để xác minh miền nghiệm và trực quan hóa bằng Matplotlib.</div>
+      <div class="fl2"><span>hpt2an.py</span><span>README.md</span></div>
+      <a class="lnk" href="https://github.com/duongtam230905-arch/Hebatphuongtrinhbacnhathaian" target="_blank" rel="noopener">https://github.com/duongtam230905-arch/Hebatphuongtrinhbacnhathaian</a>
+      <div class="run"><i>$</i> pip install sympy numpy matplotlib<br><i>$</i> python hpt2an.py</div>
+    </div>
+    <div class="qrw card a r" style="--d:.9">
+      <div class="qr">
+        <img src="qr_github.png" alt="Mã QR kho GitHub" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+        <div class="ph"><div>CHÈN ẢNH QR<br>qr_github.png<br>cùng thư mục<br>với index.html</div></div>
+      </div>
+      <p>Quét mã để mở kho mã nguồn</p>
+    </div>
+  </div>
+  <aside class="note">Toàn bộ mã nguồn, gồm tệp chương trình và hướng dẫn, nằm trên kho GitHub của nhóm. Thầy và các bạn có thể quét mã QR hoặc truy cập đường dẫn này. Chỉ cần cài ba thư viện SymPy, NumPy và Matplotlib là có thể chạy thử.</aside>
+</section>
+
+ <!-- ================= SLIDE 16 — SO SÁNH ================= -->
+<section class="slide" data-ch="Chương 3">
+  <div class="kick a">So sánh</div>
+  <h2 class="h2 a" style="--d:.15">Làm tay và <span class="grad">sử dụng chương trình</span></h2>
+  <div class="tb">
+    <div class="rw hd a" style="--d:.4"><span></span><span>LÀM THỦ CÔNG</span><span>CHƯƠNG TRÌNH</span></div>
+    <div class="rw card a" style="--d:.6"><span>Tính giao điểm</span><span>Thủ công</span><span>✓ Tự động</span></div>
+    <div class="rw card a" style="--d:.9"><span>Kiểm tra đỉnh</span><span>Thủ công</span><span>✓ Tự động</span></div>
+    <div class="rw card a" style="--d:1.2"><span>Vẽ miền nghiệm</span><span>Thủ công</span><span>✓ Tự động</span></div>
+    <div class="rw card a" style="--d:1.5"><span>Tốc độ</span><span>Chậm hơn khi hệ lớn</span><span>✓ Nhanh</span></div>
+    <div class="rw card hot a" style="--d:1.8"><span>Tư duy toán học</span><span>Trực tiếp</span><span>Vẫn cần thiết</span></div>
+  </div>
+  <p class="big16 a z" style="--d:2.8">Công cụ hỗ trợ tính toán,<br>không thay thế tư duy toán học.</p>
+  <aside class="note">Bốn dòng đầu cho thấy chương trình làm thay những thao tác tốn công: tìm giao điểm, kiểm tra đỉnh, vẽ hình. Nhưng dòng cuối mới là điều nhóm muốn nhấn mạnh: tư duy toán học vẫn là của người học. Chương trình chỉ đưa ra con số và hình vẽ, không giải thích vì sao một điểm là đỉnh hay vì sao một cạnh bị loại.</aside>
+</section>
+
+<!-- ================= SLIDE 17 — Ý NGHĨA TRONG DẠY HỌC ================= -->
+<section class="slide" data-ch="Dạy học">
+  <div class="kick a">Ý nghĩa trong dạy học</div>
+  <h2 class="h2 a" style="--d:.15">Học sinh <span class="grad">suy nghĩ trước</span>, công cụ kiểm chứng sau</h2>
+  <div class="pr">
+    <div class="p17 card a z" style="--d:.5"><div class="nb">1</div><h4>DỰ ĐOÁN</h4><p>Đoán hình dạng miền nghiệm</p></div>
+    <div class="p17 card a z" style="--d:.8"><div class="nb">2</div><h4>SUY LUẬN</h4><p>Lập luận bằng hình học</p></div>
+    <div class="p17 hot card a z" style="--d:1.1"><div class="nb">3</div><h4>SỬ DỤNG CÔNG CỤ</h4><p>Chạy chương trình</p></div>
+    <div class="p17 card a z" style="--d:1.4"><div class="nb">4</div><h4>KIỂM CHỨNG</h4><p>So với dự đoán ban đầu</p></div>
+    <div class="p17 card a z" style="--d:1.7"><div class="nb">5</div><h4>ĐIỀU CHỈNH</h4><p>Sửa lại lập luận nếu lệch</p></div>
+  </div>
+  <svg class="loop17" viewBox="0 0 1700 50" preserveAspectRatio="none" fill="none">
+    <path class="dr" pathLength="1" d="M1540 0V34Q1540 44 1530 44H170Q160 44 160 34V10" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round" style="--d:2.1"/>
+    <polygon class="sv" points="150,14 160,0 170,14" fill="#8b5cf6" style="--d:3.2"/>
+  </svg>
+  <div class="who">
+    <div class="pl card a z" style="--d:2.3"><em>👨‍🎓</em>Học sinh</div><span class="sp a" style="--d:2.4">→</span>
+    <div class="pl card a z" style="--d:2.5"><em>🧠</em>Dự đoán</div><span class="sp a" style="--d:2.6">→</span>
+    <div class="pl card a z" style="--d:2.7"><em>💻</em>SymPy</div><span class="sp a" style="--d:2.8">→</span>
+    <div class="pl card a z" style="--d:2.9"><em>📊</em>Hình ảnh</div><span class="sp a" style="--d:3.0">→</span>
+    <div class="pl card a z" style="--d:3.1"><em>🔍</em>Kiểm chứng</div>
+  </div>
+  <div class="vs17">
+    <div class="card no a l" style="--d:3.5"><s>Bấm máy → nhận đáp án</s></div>
+    <div class="card yes a r" style="--d:3.8">Suy nghĩ trước → công cụ kiểm chứng sau</div>
+  </div>
+  <aside class="note">Đây là phần nhóm muốn nhấn mạnh nhất vì chúng ta là sinh viên Sư phạm. Quy trình gợi ý gồm năm bước: dự đoán, suy luận, sử dụng công cụ, kiểm chứng, điều chỉnh. Công cụ chỉ xuất hiện ở bước ba, sau khi học sinh đã tự suy nghĩ. Nếu kết quả lệch dự đoán thì học sinh quay lại điều chỉnh lập luận. Mục tiêu là không để học sinh bấm máy rồi nhận đáp án.</aside>
+</section>
+
+<!-- ================= SLIDE 18 — KẾT LUẬN ================= -->
+<section class="slide" data-ch="Kết luận">
+  <div class="kick a">Kết luận</div>
+  <h2 class="h2 a" style="--d:.15;font-size:42px">TỪ CÔNG CỤ TÍNH TOÁN ĐẾN <span class="grad">CÔNG CỤ HỖ TRỢ TƯ DUY</span></h2>
+  <div class="g18">
+    <div class="c18 card a z" style="--d:.6"><div class="n18">01</div><h3>Toán học</h3><p>Hiểu bản chất hệ bất phương trình và miền nghiệm.</p></div>
+    <div class="c18 card a z" style="--d:1.2"><div class="n18">02</div><h3>Công nghệ</h3><p>SymPy + NumPy + Matplotlib giúp tự động hóa các thao tác tính toán và trực quan hóa.</p></div>
+    <div class="c18 card a z" style="--d:1.8"><div class="n18">03</div><h3>Sư phạm</h3><p>Công cụ nên được sử dụng để kiểm chứng, khám phá và hỗ trợ tư duy.</p></div>
+  </div>
+  <div class="q18 a" style="--d:3.4"><span>“Hiểu toán trước – dùng công cụ sau.”</span><i></i></div>
+  <aside class="note">Tóm lại có ba ý. Về toán học, cần hiểu bản chất miền nghiệm. Về công nghệ, SymPy cùng NumPy và Matplotlib tự động hóa phần tính toán và vẽ hình. Về sư phạm, công cụ nên dùng để kiểm chứng và khám phá. Câu nhóm muốn mọi người nhớ: hiểu toán trước, dùng công cụ sau.</aside>
+</section>
+
+<!-- ================= SLIDE 19 — THANK YOU ================= -->
+<section class="slide thx" data-ch="Kết thúc">
+  <svg class="bgv" viewBox="0 0 1920 1080" fill="none">
+    <defs><linearGradient id="rg19" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee" stop-opacity=".4"/><stop offset="1" stop-color="#8b5cf6" stop-opacity=".32"/></linearGradient></defs>
+    <path class="dr" pathLength="1" d="M120 820H1000" stroke="#A8B3CF" stroke-opacity=".6" stroke-width="2" style="--d:.2"/>
+    <path class="dr" pathLength="1" d="M260 960V210" stroke="#A8B3CF" stroke-opacity=".6" stroke-width="2" style="--d:.2"/>
+    <polygon class="sv" points="260,820 780,820 260,300 260,300" fill="url(#rg19)" stroke="#22d3ee" stroke-opacity=".7" stroke-width="3" style="--d:1.2">
+      <animate attributeName="points" dur="9s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1" values="260,820 780,820 260,300 260,300;260,820 780,820 650,560 260,430;260,820 780,820 260,300 260,300"/>
+    </polygon>
+    <path class="dr" pathLength="1" d="M180 400L820 1040" stroke="#22d3ee" stroke-width="3" stroke-opacity=".6" style="--d:.7"/>
+    <g class="pp" style="--d:1.6"><circle cx="260" cy="820" r="8" fill="#22d3ee"/><circle cx="780" cy="820" r="8" fill="#22d3ee"/><circle cx="260" cy="300" r="8" fill="#22d3ee"/></g>
+  </svg>
+  <div class="fl a" style="--d:1.4;right:180px;top:260px">\(x+y\le 4\)</div>
+  <div class="fl a" style="--d:1.7;right:360px;top:640px;animation-delay:-2s">\(2x+y\le 8\)</div>
+  <div class="fl a" style="--d:2.0;right:140px;top:820px;animation-delay:-4s">\(x\ge 0,\ y\ge 0\)</div>
+  <div class="t grad a" style="--d:.5">THANK YOU</div>
+  <div class="qa a z" style="--d:1.1">Q &amp; A</div>
+  <div class="ft a" style="--d:2.2">Ứng dụng SymPy vào bài toán hệ bất phương trình bậc nhất hai ẩn</div>
+  <aside class="note">Xin cảm ơn thầy và các bạn đã lắng nghe. Nhóm rất mong nhận được câu hỏi và góp ý.</aside>
+</section>
+<!-- >>> PART 5: dán slide 16–19 <<< -->
+</main>
+
+<div id="notes"></div>
+<div class="bot">
+  <span id="cnt">01 / 01</span>
+  <div class="track"><i id="bar"></i></div>
+  <div class="btns"><button id="bp" title="Trước (←)">‹</button><button id="bn" title="Sau (→)">›</button><button id="bnote" title="Ghi chú (N)">N</button><button id="bf" title="Toàn màn hình (F)">⛶</button></div>
+</div>
+</div>
+
+<script>
+(()=>{
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const stage=$('#stage'),slides=$$('.slide'),N=slides.length,pad=n=>String(n).padStart(2,'0');
+let cur=-1,frag=0,timers=[];
+
+/* scale 1920x1080 to window */
+function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener('resize',fit);fit();
+
+/* tiny Python highlighter for typed code */
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function hl(src){return esc(src).replace(/(#.*$)|("[^"]*"|'[^']*')|\b(import|from|as|for|in|def|return|if|else|print)\b|\b([A-Za-z_]\w*)(?=\()|\b(\d+(?:\.\d+)?)\b/gm,
+ (m,c,s,k,f,n)=>c?`<span class=c>${c}</span>`:s?`<span class=s>${s}</span>`:k?`<span class=k>${k}</span>`:f?`<span class=fn>${f}</span>`:`<span class=nm>${n}</span>`)}
+
+/* typewriter: <pre class="type" data-lang="py" data-delay="ms"> */
+function typeEl(el,delay){
+  const full=el._t||(el._t=el.textContent.replace(/^\n/,'').replace(/\s+$/,''));
+  el.innerHTML='';let i=0;
+  timers.push(setTimeout(function tick(){
+    i=Math.min(full.length,i+2);const t=full.slice(0,i);
+    el.innerHTML=el.dataset.lang?hl(t):esc(t);
+    if(i<full.length)timers.push(setTimeout(tick,18));
+  },delay));
+}
+/* counter: <span data-count="95" data-delay="500"> */
+function count(el){
+  const to=+el.dataset.count,d=+el.dataset.delay||400,t0=performance.now()+d;el.textContent='0';
+  (function step(t){if(t<t0)return requestAnimationFrame(step);const p=Math.min(1,(t-t0)/1200);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(step)})(performance.now());
+}
+
+/* fragments: elements with data-f="k" appear at key press k; slide gets classes st-1..st-k */
+const total=s=>Math.max(0,...$$('[data-f]',s).map(e=>+e.dataset.f));
+function setFrag(s,k){
+  frag=k;$$('[data-f]',s).forEach(e=>e.classList.toggle('show',+e.dataset.f<=k));
+  [...s.classList].filter(c=>/^st-\d+$/.test(c)).forEach(c=>s.classList.remove(c));
+  for(let j=1;j<=k;j++)s.classList.add('st-'+j);
+}
+
+function go(i,showAll){
+  i=Math.max(0,Math.min(N-1,i));if(i===cur)return;
+  const old=slides[cur];
+  if(old){old.classList.remove('active');old.classList.add('leaving');setTimeout(()=>{if(!old.classList.contains('active'))old.classList.remove('leaving')},700)}
+  timers.forEach(clearTimeout);timers=[];
+  cur=i;const s=slides[i];s.classList.add('active');
+  setFrag(s,showAll?total(s):0);
+  $$('.type',s).forEach(el=>typeEl(el,+el.dataset.delay||600));
+  $$('[data-count]',s).forEach(count);
+  $('#chap').textContent=s.dataset.ch||'';
+  $('#cnt').textContent=`${pad(i+1)} / ${pad(N)}`;
+  $('#bar').style.width=((i+1)/N*100)+'%';
+  const n=$('aside.note',s);$('#notes').innerHTML=n?n.innerHTML:'';
+  history.replaceState(null,'','#'+(i+1));
+}
+const next=()=>{const s=slides[cur];frag<total(s)?setFrag(s,frag+1):go(cur+1)};
+const prev=()=>{const s=slides[cur];frag>0?setFrag(s,frag-1):go(cur-1,true)};
+const fs=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
+const nt=()=>document.body.classList.toggle('shownotes');
+
+addEventListener('keydown',e=>{
+  const k=e.key;
+  if(['ArrowRight','PageDown',' ','Enter'].includes(k)){e.preventDefault();next()}
+  else if(['ArrowLeft','PageUp','Backspace'].includes(k)){e.preventDefault();prev()}
+  else if(k==='Home')go(0);else if(k==='End')go(N-1,true);
+  else if(k==='f'||k==='F')fs();else if(k==='n'||k==='N')nt();
+});
+stage.addEventListener('click',e=>{if(!e.target.closest('.bot,.top,a'))next()});
+$('#bn').onclick=e=>{e.stopPropagation();next()};
+$('#bp').onclick=e=>{e.stopPropagation();prev()};
+$('#bf').onclick=e=>{e.stopPropagation();fs()};
+$('#bnote').onclick=e=>{e.stopPropagation();nt()};
+
+/* background: soft particles + links */
+const cv=$('#bg'),cx=cv.getContext('2d');cv.width=1920;cv.height=1080;
+const P=Array.from({length:55},()=>({x:Math.random()*1920,y:Math.random()*1080,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3}));
+(function loop(){
+  cx.clearRect(0,0,1920,1080);
+  for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>1920)p.vx*=-1;if(p.y<0||p.y>1080)p.vy*=-1;
+    cx.fillStyle='rgba(34,211,238,.45)';cx.beginPath();cx.arc(p.x,p.y,2,0,6.3);cx.fill()}
+  for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
+    const d=Math.hypot(P[i].x-P[j].x,P[i].y-P[j].y);
+    if(d<170){cx.strokeStyle=`rgba(139,92,246,${.2*(1-d/170)})`;cx.beginPath();cx.moveTo(P[i].x,P[i].y);cx.lineTo(P[j].x,P[j].y);cx.stroke()}}
+  requestAnimationFrame(loop);
+})();
+
+go((parseInt(location.hash.slice(1))||1)-1);
+})();
+</script>
+</body>
+</html>
